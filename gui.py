@@ -21,6 +21,7 @@
 """gui.py - graphic interface for praiseTex"""
 
 import os
+import subprocess
 try:
     # if using python2.x
     from Tkinter import *
@@ -179,7 +180,7 @@ class PraiseTexGUI(object):
 
         # compile document
         self.updateStatus("Compiling songs")
-        os.system("pdflatex ctmp.tex")
+        subprocess.call(["pdflatex", "ctmp.tex"])
         os.rename("ctmp.pdf", "chords.pdf")
 
         # remove temporary files
@@ -212,7 +213,7 @@ class PraiseTexGUI(object):
 
         # compile document
         self.updateStatus("Compiling songs")
-        os.system("pdflatex stmp.tex")
+        subprocess.call(["pdflatex", "stmp.tex"])
         os.rename("stmp.pdf", "slides.pdf")
 
         # remove temporary files
