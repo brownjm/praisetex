@@ -21,6 +21,7 @@
 """gui.py - graphic interface for praiseTex"""
 
 import os
+import subprocess
 try:
     # if using python2.x
     from Tkinter import *
@@ -179,15 +180,18 @@ class PraiseTexGUI(object):
 
         # compile document
         self.updateStatus("Compiling songs")
-        os.system("pdflatex ctmp.tex")
-        os.rename("ctmp.pdf", "chords.pdf")
+        error = subprocess.call(["pdflatex", "-halt-on-error", "ctmp.tex"])
+        if error:
+            self.updateStatus("pdflatex has failed")
+        else:
+            os.rename("ctmp.pdf", "chords.pdf")
+            self.updateStatus("Compiled chords.pdf")
 
         # remove temporary files
         fnames = os.listdir('.')
         for f in fnames:
             if "ctmp" in f:
                 os.remove(f)
-        self.updateStatus("Compiled chords.pdf")
 
     def compileSlides(self):
         """Compile slides from selected songs"""
@@ -212,8 +216,12 @@ class PraiseTexGUI(object):
 
         # compile document
         self.updateStatus("Compiling songs")
-        os.system("pdflatex stmp.tex")
-        os.rename("stmp.pdf", "slides.pdf")
+        error = subprocess.call(["pdflatex", "-halt-on-error", "stmp.tex"])
+        if error:
+            self.updateStatus("pdflatex has failed")
+        else:
+            os.rename("stmp.pdf", "slides.pdf")
+            self.updateStatus("Compiled slides.pdf")
 
         # remove temporary files
         fnames = os.listdir('.')

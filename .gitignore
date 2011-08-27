@@ -1,5 +1,12 @@
 
 TODO/*
 *~
+*.pdf
+*.out
+*.aux
+*.log
+*.tex
+
+
 !.gitignore
 
