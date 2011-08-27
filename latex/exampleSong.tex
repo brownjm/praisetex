@@ -1,0 +1,51 @@
+%    praiseTex - simple set of programs for creating praise music material, 
+%    such as guitar chord sheets and presentation slides
+%
+%    Copyright (C) 2011 Jeffrey M Brown
+%    brown.jeffreym@gmail.com
+%
+%    This program is free software: you can redistribute it and/or modify
+%    it under the terms of the GNU General Public License as published by
+%    the Free Software Foundation, either version 3 of the License, or
+%    (at your option) any later version.
+%
+%    This program is distributed in the hope that it will be useful,
+%    but WITHOUT ANY WARRANTY; without even the implied warranty of
+%    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%    GNU General Public License for more details.
+%
+%    You should have received a copy of the GNU General Public License
+%    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+%    exampleSong.tex - song to demonstrate structures of a typical song file
+
+\subsection{Title}
+\by{Author}
+
+\chorus{
+  \chord{G}This is a \chord{C2}chorus \\
+  \chord{Dsus}This is still the \chord{C2}chorus \\
+  \chord{G}Another line the awesome \chord{C2}chorus \\
+  \chord{Dsus}End of the \chord{C2}chorus
+}
+
+\verse {
+  \chordleft{Em}This is \chord{C2}verse \\
+  \chord{Dsus}This is another line in the verse \\
+  \chord{Am}Still another line in the verse \\
+  End of the verse
+}
+
+\verse {
+  This is another verse \\
+  Wow, this is an amazing verse \\
+  Whew, finally done
+}
+
+\bridge {
+  \chord{Bm}We have \chord{D}reached the bridge \\
+  \chord{G}We have reached the bridge \\
+  We have reached the bridge \\
+  \chordline{chord{G} \hspace{3mm} \chord{C} \hspace{3mm} \chord{D}}
+  \tochorus
+}

@@ -1,0 +1,46 @@
+#    praiseTex - simple set of programs for creating praise music material, 
+#    such as guitar chord sheets and presentation slides
+#
+#    Copyright (C) 2011 Jeffrey M Brown
+#    brown.jeffreym@gmail.com
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+praiseTex was designed to run on GNU/Linux, Mac and Windows provided you have
+the required packages:
+
+    Latex, including pdflatex and Beamer
+    Python 2.7+ or 3.x+, including Tkinter (most versions already have this)
+
+
+The easiest way to produce chord sheets or presentations is with the GUI:
+
+    python gui.py
+
+
+If you'd prefer a command line version (and you're on a Unix based computer),
+then use the following bash scripts. These do not require Python.
+
+    ./chords song1.tex song2.tex ...
+    ./slides sont1.tex song2.tex ...
+
+
+All song files must adhere to the format shown in exampleSong.tex, which is 
+located in folder 'latex'. Do not edit the files chords.tex and slides.tex. 
+They are used as templates for producing the repective files.
+
+Folder structure is important. Please place song files within the 'songs' 
+subfolder.
+

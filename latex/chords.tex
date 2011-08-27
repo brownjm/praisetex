@@ -1,0 +1,115 @@
+%    praiseTex - simple set of programs for creating praise music material, 
+%    such as guitar chord sheets and presentation slides
+%
+%    Copyright (C) 2011 Jeffrey M Brown
+%    brown.jeffreym@gmail.com
+%
+%    This program is free software: you can redistribute it and/or modify
+%    it under the terms of the GNU General Public License as published by
+%    the Free Software Foundation, either version 3 of the License, or
+%    (at your option) any later version.
+%
+%    This program is distributed in the hope that it will be useful,
+%    but WITHOUT ANY WARRANTY; without even the implied warranty of
+%    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%    GNU General Public License for more details.
+%
+%    You should have received a copy of the GNU General Public License
+%    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+%
+%    Thanks to CalTech Christian fellowship and UCSC Graduate Christian 
+%    Fellowship for the original code, which was the inspiration for the
+%    chords.tex file.
+%
+% chords.tex - generates a chord sheet for praise songs
+
+\documentclass[11pt, twoside]{article}
+
+% external packages
+\usepackage[margin=2.5cm]{geometry} % set smaller margins
+\usepackage{multicol}
+
+% text formatting variables
+\parskip = 0mm
+\parindent = 0mm
+\widowpenalty = 10000
+\clubpenalty = 10000
+\renewcommand{\thesection}{\Alph{section}}
+\setcounter{section}{19}
+
+% assign the author
+\newcommand{\by}[1] {
+  \vspace{-2mm}
+  \hspace{11mm}\emph{By #1}\\
+  \vspace{-3mm}
+}
+
+% comments for musicians
+\newcommand{\comment}[1] {
+  \hspace{7mm}\textbf{#1}\\
+  \vspace{2mm}
+}
+
+% create a verse
+\renewcommand{\verse}[1]{#1\\}
+
+% create a prechorus
+\newcommand{\prechorus}[1] {
+  \vspace{-4mm}
+  \begin{quote}
+    \emph{prechorus:}\\
+    \hspace{1mm}#1
+  \end{quote}
+  \vspace{-2mm}
+}
+
+% create a chorus
+\newcommand{\chorus}[1] {
+  \vspace{-4mm}
+  \begin{quote}
+    \emph{chorus:}\\
+    \hspace{1mm}#1\\
+  \end{quote}
+  \vspace{-2mm}
+}
+
+% create a bridge
+\newcommand{\bridge}[1] {
+  \vspace{-3mm}
+  \begin{quote}
+    \emph{bridge:}\\
+    \hspace{1mm}#1\\
+  \end{quote}
+  \vspace{-3mm}
+}
+
+% place a chord above following letter
+\newcommand{\chord}[1] {$\stackrel{\makebox[0mm][l]{\hspace{1mm}\footnotesize{\textbf{#1}}}}{^{^{^{}}}}$}
+
+% place a chord above and to the left of following letter
+\newcommand{\chordleft}[1] {$\stackrel{\makebox[0mm][r]{\hspace{1mm}\footnotesize{\textbf{#1}}}}{^{^{^{}}}}$}
+
+% create a line consisting of only chords
+\newcommand{\chordline}[1] {
+  \small{\textbf{#1}}
+}
+
+% directions to other parts of the song
+\newcommand{\tochorus}{\emph{(chorus)}}
+\newcommand{\toprechorus}{\emph{(prechorus)}}
+\renewcommand{\repeat}{\emph{(repeat)}}
+
+% disable unused commands
+\newcommand{\framebreak}{}
+
+
+\title{GCF Praise Book}
+\author{Jeffrey M. Brown}
+\date{\today}
+
+\begin{document}
+\begin{multicols}{2}
+  % input songs here
+  \input{songs/YourLoveIsExtravagant.tex}
+\end{multicols}
+\end{document}
