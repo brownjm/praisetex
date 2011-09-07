@@ -25,9 +25,11 @@ import subprocess
 try:
     # if using python2.x
     from Tkinter import *
+    import tkFileDialog
 except ImportError:
     # if using python3.x
     from tkinter import *
+    import tkFileDialog
 
 
 class PraiseTexGUI(object):
@@ -55,6 +57,13 @@ class PraiseTexGUI(object):
         root.title("praiseTex")
         # set initial size of window
         #root.geometry("{0}x{1}".format(window_width, window_height))
+
+        # menu
+        menubar = Menu(root)
+        filemenu = Menu(menubar, tearoff=0)
+        filemenu.add_command(label="Open Directory", command=self.openDirectory)
+        menubar.add_cascade(label="File", menu=filemenu)
+        root.config(menu=menubar)
 
         # left section
         self.songsToCompileTitle = Label(root, text="Songs to Compile", 
@@ -139,6 +148,11 @@ class PraiseTexGUI(object):
                 self.songs.remove(song)
         self.updateStatus("{0} songs found in directory {1}".format(len(self.songs), self.songdir))
 
+    def openDirectory(self):
+        """Selects directory for songs"""
+        dirname = tkFileDialog.askdirectory(parent=root, initialdir=self.songdir, title='Please select a directory')
+        if len(dirname) > 0:
+            self.songdir = dirname
 
     def addSong(self):
         """Add song to compile list"""
