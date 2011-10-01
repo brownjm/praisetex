@@ -38,6 +38,7 @@ Will be converted into the following:
 """
 
 import re
+import sys
 
 class ChordsWordsPair(object):
     """Represents a line of words and their associated chords"""
@@ -106,5 +107,7 @@ class ChordConverter(object):
 whitespaceThresh = 0.6
 
 if __name__ == "__main__":
+    if len(sys.argv) is 1:
+        raise IOError("Please supply a filename as argument")
     c = ChordConverter()
-    c.convert('chordsheet')
+    c.convert(sys.argv[1])
