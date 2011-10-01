@@ -51,7 +51,7 @@ class ChordsWordsPair(object):
         regex = re.compile("[A-G]")
         matches = regex.finditer(self.chordline)
         # chords and their associated positions
-        chords = zip([match.start() for match in matches], self.chordline.split())
+        chords = list(zip([match.start() for match in matches], self.chordline.split()))
         chords.reverse()
         for chord in chords:
             self.wordline = self.insert(self.wordline, chord)
@@ -72,9 +72,11 @@ class ChordConverter(object):
         try:
             while 1:
                 # look for pairs of chord line followed by word line
-                line = f.next()
+                line = f.readline()
+                if len(line) is 0:
+                    break
                 if self.isChords(line):
-                    self.songfilelines.append(ChordsWordsPair(line, f.next()).combine())
+                    self.songfilelines.append(ChordsWordsPair(line, f.readline()).combine())
                 else:
                     self.songfilelines.append(line)
         except StopIteration:
