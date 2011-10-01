@@ -38,9 +38,19 @@ then use the following bash scripts. These do not require Python.
 
 
 All song files must adhere to the format shown in exampleSong.tex, which is 
-located in folder 'latex'. Do not edit the files chords.tex and slides.tex. 
-They are used as templates for producing the repective files.
+located in folder 'latex'. To aid in producing the songs files, the script
+chord_sheet_converter.py has been created. This script will take a typical 
+guitar chord sheet found online, where chords are placed above words using 
+spaces, and partially convert it into a proper song file. To run it use:
 
-Folder structure is important. Please place song files within the 'songs' 
-subfolder.
+    python chord_sheet_converter.py [filename]
 
+
+The output will be named: [filename].tex. The user will have to edit the file 
+further, in order for it to be usable by praiseTex. This script took care of 
+the tedious part of placing chords in the correct position within lyrics.
+
+Warning:
+Do not edit the files chords.tex and slides.tex. They are used as templates 
+for producing the repective files. Folder structure is important. Please place 
+song files within the 'songs' subfolder.
