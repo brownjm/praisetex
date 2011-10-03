@@ -54,7 +54,6 @@ class ChordsWordsPair(object):
         chords = list(zip([match.start() for match in matches], self.chordline.split()))
         chords.reverse()
         for chord in chords:
-            print chord
             self.wordline = self.insert(self.wordline, chord)
         return self.wordline[:-1] + r"\\" + self.wordline[-1]
 
@@ -69,20 +68,25 @@ class ChordConverter(object):
         self.songfilelines = []
 
     def convert(self, filename):
+        linecount = 0 # num of lines modified
         with open(filename) as f:
             # look for pairs of chord line followed by word line
             line = f.readline()
             while len(line) > 0:
                 if self.isChords(line):
                     nextline = f.readline()
+                    linecount += 1
                     self.songfilelines.append(ChordsWordsPair(line, nextline).combine())
                 else:
                     self.songfilelines.append(line)
                 line = f.readline()
 
-        with open(filename + ".tex", "w") as f:
+        newname = filename + ".tex"
+        with open(newname, "w") as f:
             f.write("\subsection{}\n\\by{}\n\comment{}\n")
             f.writelines(self.songfilelines)
+        msg = "Wrote file: {}\nWas able to insert chords into {} lines"
+        print msg.format(newname, linecount)
 
     def isChords(self, line):
         if not containsAny(line, notChords) and len(line.strip()) > 0:
