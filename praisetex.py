@@ -18,7 +18,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-"""gui.py - graphic interface for praiseTex"""
+"""praisetex.py - Program used to generate presentation slides and chords 
+sheets"""
 
 import os
 import subprocess
@@ -31,6 +32,7 @@ except ImportError:
     from tkinter import *
     import tkFileDialog
 
+import chord_sheet_converter as csc
 
 class PraiseTexGUI(object):
     """Graphical interface for selecting songs and compiling them"""
@@ -64,6 +66,9 @@ class PraiseTexGUI(object):
         filemenu.add_command(label="Open Directory", command=self.openDirectory)
         filemenu.add_command(label="Exit", command=root.quit)
         menubar.add_cascade(label="File", menu=filemenu)
+        toolmenu = Menu(menubar, tearoff=0)
+        toolmenu.add_command(label="Convert Chord Sheet", command=self.convert)
+        menubar.add_cascade(label="Tools", menu=toolmenu)
         root.config(menu=menubar)
 
         # left section
@@ -254,6 +259,13 @@ class PraiseTexGUI(object):
     def updateStatus(self, message):
         """Update the status bar"""
         self.status.config(text=message)
+
+    def convert(self):
+        filename = tkFileDialog.askopenfilename()
+        if len(filename) > 0:
+            converter = csc.ChordConverter()
+            converter.convert(filename)
+            self.updateStatus("Wrote file: {}".format(filename + ".tex"))
 
 
 if __name__ == '__main__':
