@@ -27,7 +27,7 @@ the required packages:
 
 The easiest way to produce chord sheets or presentations is with the GUI:
 
-    python gui.py
+    python praisetex.py
 
 
 If you'd prefer a command line version (and you're on a Unix based computer),

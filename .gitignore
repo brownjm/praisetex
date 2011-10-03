@@ -6,7 +6,7 @@ TODO/*
 *.aux
 *.log
 *.tex
-
+*.pyc
 
 !.gitignore
 
