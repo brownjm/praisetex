@@ -44,7 +44,7 @@ class ChordsWordsPair(object):
     """Represents a line of words and their associated chords"""
     def __init__(self, chordline, wordline):
         self.chordline = chordline
-        self.wordline = wordline
+        self.wordline = wordline.ljust(len(chordline))
 
     def combine(self):
         """Places chords within wordline"""
@@ -54,6 +54,7 @@ class ChordsWordsPair(object):
         chords = list(zip([match.start() for match in matches], self.chordline.split()))
         chords.reverse()
         for chord in chords:
+            print chord
             self.wordline = self.insert(self.wordline, chord)
         return self.wordline[:-1] + r"\\" + self.wordline[-1]
 
@@ -68,45 +69,49 @@ class ChordConverter(object):
         self.songfilelines = []
 
     def convert(self, filename):
-        f = open(filename)
-        try:
-            while 1:
-                # look for pairs of chord line followed by word line
-                line = f.readline()
-                if len(line) is 0:
-                    break
+        with open(filename) as f:
+            # look for pairs of chord line followed by word line
+            line = f.readline()
+            while len(line) > 0:
                 if self.isChords(line):
-                    self.songfilelines.append(ChordsWordsPair(line, f.readline()).combine())
+                    nextline = f.readline()
+                    self.songfilelines.append(ChordsWordsPair(line, nextline).combine())
                 else:
                     self.songfilelines.append(line)
-        except StopIteration:
-            pass
-        finally:
-            f.close()
+                line = f.readline()
 
         with open(filename + ".tex", "w") as f:
             f.write("\subsection{}\n\\by{}\n\comment{}\n")
             f.writelines(self.songfilelines)
 
     def isChords(self, line):
-        spaceRatio = float(line.count(" ")) / float(len(line))
-        if spaceRatio > whitespaceThresh:
+        if not containsAny(line, notChords) and len(line.strip()) > 0:
             return True
         else:
-            return False
+            False
 
-    def isWords(self, line):
-        spaceRatio = float(line.count(" ")) / float(len(line))
-        if spaceRatio < whitespaceThresh:
+
+def containsAny(line, letters):
+    for letter in letters:
+        if letter in line:
             return True
+    return False
+
+def containsOnly(line, letters):
+    for c in line:
+        if c.isalnum():
+            if c in letters:
+                continue
+            else:
+                return False
         else:
-            return False
+            continue
 
+    return True
+        
 
-
-# threshold for ratio of whitespace to letters
-# if above, then probably chords
-whitespaceThresh = 0.6
+notChords = "HJKLOPQRTVWXYZ"
+chords = "ABCDEFGminajsugd123456789"
 
 if __name__ == "__main__":
     if len(sys.argv) is 1:
