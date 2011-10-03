@@ -41,7 +41,8 @@ All song files must adhere to the format shown in exampleSong.tex, which is
 located in folder 'latex'. To aid in producing the songs files, the script
 chord_sheet_converter.py has been created. This script will take a typical 
 guitar chord sheet found online, where chords are placed above words using 
-spaces, and partially convert it into a proper song file. To run it use:
+spaces, and partially convert it into a proper song file. You can access this 
+tool within the praisetex GUI or run the following:
 
     python chord_sheet_converter.py [filename]
 
