@@ -28,9 +28,12 @@ try:
     from Tkinter import *
     import tkFileDialog
 except ImportError:
-    # if using python3.x
-    from tkinter import *
-    import tkFileDialog
+    try:
+        # if using python3.x
+        from tkinter import *
+        import tkFileDialog
+    except ImportError:
+        raise ImportError("Tkinter for Python is not installed")
 
 import chord_sheet_converter as csc
 
