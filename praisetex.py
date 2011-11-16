@@ -145,6 +145,8 @@ class PraiseTexGUI(object):
         self.status = Label(root, text="Ready", padx="1m")
         self.status.grid(row=3, column=0, columnspan=3, sticky=W)
 
+        self.refreshSonglist()
+
     def refreshSonglist(self):
         """Sync up the filenames in songlist with files in directory"""
         self.availableSongs.delete(0, END)
