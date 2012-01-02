@@ -2,7 +2,7 @@
 #    praiseTex - simple set of programs for creating praise music material, 
 #    such as guitar chord sheets and presentation slides
 #
-#    Copyright (C) 2011 Jeffrey M Brown
+#    Copyright (C) 2012 Jeffrey M Brown
 #    brown.jeffreym@gmail.com
 #
 #    This program is free software: you can redistribute it and/or modify
