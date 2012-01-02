@@ -151,12 +151,11 @@ class PraiseTexGUI(object):
         """Sync up the filenames in songlist with files in directory"""
         self.availableSongs.delete(0, END)
         self.songs = os.listdir(self.songdir)
+        # filter out song files ending with tex file extension
+        self.songs = [song for song in self.songs if song.endswith('tex')]
         self.songs.sort() # alphabetize
         for song in self.songs:
-            if song[-3:] == "tex": # make sure song has correct extension
-                self.availableSongs.insert(END, song)
-            else:
-                self.songs.remove(song)
+            self.availableSongs.insert(END, song)
         self.updateStatus("{0} songs found in directory {1}".format(len(self.songs), self.songdir))
 
     def openDirectory(self):
