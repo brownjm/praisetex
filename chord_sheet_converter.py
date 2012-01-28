@@ -44,28 +44,34 @@ class ChordsWordsPair(object):
     """Represents a line of words and their associated chords"""
     def __init__(self, chordline, wordline):
         self.chordline = chordline
-        self.wordline = wordline.ljust(len(chordline))
+        self.wordline = wordline.ljust(len(chordline)) # make same length
 
     def combine(self):
         """Places chords within wordline"""
-        regex = re.compile("[A-G]")
+        regex = re.compile("[A-G]") # valid chords
         matches = regex.finditer(self.chordline)
-        # chords and their associated positions
-        chords = list(zip([match.start() for match in matches], self.chordline.split()))
+
+        # chords and their associated positions: list of (location, chord)
+        chords = list(zip([match.start() for match in matches], 
+                          self.chordline.split()))
+        
+        # Must insert chords from end to beginning of wordline,
+        # since each chord insertion shifts the position of subsequent chords
         chords.reverse()
         for chord in chords:
-            self.wordline = self.insert(self.wordline, chord)
-        return self.wordline[:-1] + r"\\" + self.wordline[-1]
+            self.wordline = self.insert(self.wordline, chord) # insertion
+        return self.wordline[:-1] + r"\\" + self.wordline[-1] # add newline: \\
 
     def insert(self, string, chord):
+        """Wraps chord in latex command \chord{}, and inserts it into string"""
         loc, ch = chord
         return string[:loc] + "\chord{{{}}}".format(ch) + string[loc:]
         
 
 class ChordConverter(object):
-    """Converts typical guitar chord sheet into song file format"""
+    """Converts typical guitar chord sheet into latex song file format"""
     def __init__(self):
-        self.songfilelines = []
+        self.songfilelines = [] # holds text for converted song file
 
     def convert(self, filename):
         linecount = 0 # num of lines modified
@@ -73,22 +79,27 @@ class ChordConverter(object):
             # look for pairs of chord line followed by word line
             line = f.readline()
             while len(line) > 0:
-                if self.isChords(line):
-                    nextline = f.readline()
+                if self.isChords(line): # valid chordline
+                    nextline = f.readline() # get wordline below it
                     linecount += 1
+                    # combine chords and words together
                     self.songfilelines.append(ChordsWordsPair(line, nextline).combine())
-                else:
+                else: # not a valid chordline, place in song file as is
                     self.songfilelines.append(line)
-                line = f.readline()
+                line = f.readline() # get next line
 
-        newname = filename + ".tex"
+        newname = filename + ".tex" # add latex extension
         with open(newname, "w") as f:
+            # add song file header and write out file
             f.write("\subsection{}\n\\by{}\n\comment{}\n")
             f.writelines(self.songfilelines)
+
+        # print out final status of conversion
         msg = "Wrote file: {}\nWas able to insert chords into {} lines"
         print msg.format(newname, linecount)
 
     def isChords(self, line):
+        """Check if line contains chords"""
         if not containsAny(line, notChords) and len(line.strip()) > 0:
             return True
         else:
@@ -96,28 +107,33 @@ class ChordConverter(object):
 
 
 def containsAny(line, letters):
+    """Check if any of the letters are in the line"""
     for letter in letters:
         if letter in line:
             return True
     return False
 
 def containsOnly(line, letters):
+    """Check if the line only contains these letters"""
     for c in line:
-        if c.isalnum():
+        if c.isalnum(): # if character is alphanumeric
             if c in letters:
                 continue
-            else:
+            else: # character not found in letters
                 return False
-        else:
+        else: # ignore non-alphanumeric characters
             continue
 
     return True
-        
 
-notChords = "HJKLOPQRTVWXYZ"
+        
+# characters that are used or not used in guitar chords
 chords = "ABCDEFGminajsugd123456789"
+notChords = "HJKLOPQRTVWXYZ"
+
 
 if __name__ == "__main__":
+    # if run from command line, convert first argument
     if len(sys.argv) is 1:
         raise IOError("Please supply a filename as argument")
     c = ChordConverter()
