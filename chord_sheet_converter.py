@@ -65,6 +65,7 @@ class ChordsWordsPair(object):
     def insert(self, string, chord):
         """Wraps chord in latex command \chord{}, and inserts it into string"""
         loc, ch = chord
+        ch = ch.replace('#', '\#')  # latex requires backslash before #-symbol
         return string[:loc] + "\chord{{{}}}".format(ch) + string[loc:]
         
 
