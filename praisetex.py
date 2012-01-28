@@ -2,7 +2,7 @@
 #    praiseTex - simple set of programs for creating praise music material, 
 #    such as guitar chord sheets and presentation slides
 #
-#    Copyright (C) 2011 Jeffrey M Brown
+#    Copyright (C) 2012 Jeffrey M Brown
 #    brown.jeffreym@gmail.com
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -18,7 +18,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-"""gui.py - graphic interface for praiseTex"""
+"""praisetex.py - Program used to generate presentation slides and chords 
+sheets"""
 
 import os
 import subprocess
@@ -27,10 +28,14 @@ try:
     from Tkinter import *
     import tkFileDialog
 except ImportError:
-    # if using python3.x
-    from tkinter import *
-    import tkFileDialog
+    try:
+        # if using python3.x
+        from tkinter import *
+        import tkFileDialog
+    except ImportError:
+        raise ImportError("Tkinter for Python is not installed")
 
+import chord_sheet_converter as csc
 
 class PraiseTexGUI(object):
     """Graphical interface for selecting songs and compiling them"""
@@ -64,6 +69,9 @@ class PraiseTexGUI(object):
         filemenu.add_command(label="Open Directory", command=self.openDirectory)
         filemenu.add_command(label="Exit", command=root.quit)
         menubar.add_cascade(label="File", menu=filemenu)
+        toolmenu = Menu(menubar, tearoff=0)
+        toolmenu.add_command(label="Convert Chord Sheet", command=self.convert)
+        menubar.add_cascade(label="Tools", menu=toolmenu)
         root.config(menu=menubar)
 
         # left section
@@ -137,16 +145,17 @@ class PraiseTexGUI(object):
         self.status = Label(root, text="Ready", padx="1m")
         self.status.grid(row=3, column=0, columnspan=3, sticky=W)
 
+        self.refreshSonglist()
+
     def refreshSonglist(self):
         """Sync up the filenames in songlist with files in directory"""
         self.availableSongs.delete(0, END)
         self.songs = os.listdir(self.songdir)
+        # filter out song files ending with tex file extension
+        self.songs = [song for song in self.songs if song.endswith('tex')]
         self.songs.sort() # alphabetize
         for song in self.songs:
-            if song[-3:] == "tex": # make sure song has correct extension
-                self.availableSongs.insert(END, song)
-            else:
-                self.songs.remove(song)
+            self.availableSongs.insert(END, song)
         self.updateStatus("{0} songs found in directory {1}".format(len(self.songs), self.songdir))
 
     def openDirectory(self):
@@ -254,6 +263,13 @@ class PraiseTexGUI(object):
     def updateStatus(self, message):
         """Update the status bar"""
         self.status.config(text=message)
+
+    def convert(self):
+        filename = tkFileDialog.askopenfilename()
+        if len(filename) > 0:
+            converter = csc.ChordConverter()
+            converter.convert(filename)
+            self.updateStatus("Wrote file: {}".format(filename + ".tex"))
 
 
 if __name__ == '__main__':
