@@ -1,6 +1,10 @@
 *
 !.gitignore
 
+# formatting tools
+!---ColumnBreak---
+!---PageBreak---
+
 # public domain songs
 !AllHailThePower.tex
 !AmazingGrace.tex
