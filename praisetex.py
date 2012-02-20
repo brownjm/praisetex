@@ -31,7 +31,7 @@ except ImportError:
     try:
         # if using python3.x
         from tkinter import *
-        import tkFileDialog
+        import tkinter.filedialog as tkFileDialog
     except ImportError:
         raise ImportError("Tkinter for Python is not installed")
 
