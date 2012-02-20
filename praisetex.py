@@ -31,7 +31,7 @@ except ImportError:
     try:
         # if using python3.x
         from tkinter import *
-        import tkFileDialog
+        import tkinter.filedialog as tkFileDialog
     except ImportError:
         raise ImportError("Tkinter for Python is not installed")
 
@@ -149,10 +149,13 @@ class PraiseTexGUI(object):
 
     def refreshSonglist(self):
         """Sync up the filenames in songlist with files in directory"""
+        # clear song list
         self.availableSongs.delete(0, END)
+
+        # add song files
         self.songs = os.listdir(self.songdir)
         # filter out song files ending with tex file extension
-        self.songs = [song for song in self.songs if song.endswith('tex')]
+        self.songs = [song for song in self.songs if song.endswith('tex') or song.endswith('---')]
         self.songs.sort() # alphabetize
         for song in self.songs:
             self.availableSongs.insert(END, song)
@@ -240,7 +243,8 @@ class PraiseTexGUI(object):
 
         # compile document
         self.updateStatus("Compiling songs")
-        error = subprocess.call(["pdflatex", "-halt-on-error", "stmp.tex"])
+        #error = subprocess.call(["pdflatex", "-halt-on-error", "stmp.tex"])
+        error = subprocess.call(["pdflatex", "-halt-on-error",  "\\pdfminorversion=4", "\\input{stmp.tex}"])
         if error:
             self.updateStatus("pdflatex has failed")
         else:
@@ -257,7 +261,7 @@ class PraiseTexGUI(object):
     def createSongString(self):
         """Construct latex \input strings containing selected songs"""
         songList = self.songsToCompile.get(0, END)
-        folder = os.path.join(self.songdir, '')
+        folder = os.path.join(self.songdir, '')                
         return "".join(["\input{{{0}{1}}}\n".format(folder, song) for song in songList])
 
     def updateStatus(self, message):
