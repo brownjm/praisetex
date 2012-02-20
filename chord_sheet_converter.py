@@ -97,7 +97,7 @@ class ChordConverter(object):
 
         # print out final status of conversion
         msg = "Wrote file: {}\nWas able to insert chords into {} lines"
-        print msg.format(newname, linecount)
+        print(msg.format(newname, linecount))
 
     def isChords(self, line):
         """Check if line contains chords"""
