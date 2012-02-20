@@ -1,4 +1,4 @@
-#    praiseTex - simple set of programs for creating praise music material, 
+#    praiseTex - a simple set of programs for creating praise music material, 
 #    such as guitar chord sheets and presentation slides
 #
 #    Copyright (C) 2012 Jeffrey M Brown
@@ -18,40 +18,45 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-praiseTex was designed to run on GNU/Linux, Mac and Windows provided you have
-the required packages:
+praiseTex was designed to run on GNU/Linux, Mac and Windows provided
+you have the required packages:
 
     Latex, including pdflatex and Beamer
-    Python 2.7+ or 3.x+, including Tkinter (most versions already have this)
+    Python 2.7+ or 3.x+, including Tkinter (most versions have this)
 
 
-The easiest way to produce chord sheets or presentations is with the GUI:
+The easiest way to produce chord sheets or presentations is with the
+GUI:
 
     python praisetex.py
 
 
-If you'd prefer a command line version (and you're on a Unix based computer),
-then use the following bash scripts. These do not require Python.
+If you'd prefer a command line version (and you're on a Unix based
+computer), then use the following bash scripts. These do not require
+Python.
 
     ./chords song1.tex song2.tex ...
-    ./slides sont1.tex song2.tex ...
+    ./slides song1.tex song2.tex ...
 
 
-All song files must adhere to the format shown in exampleSong.tex, which is 
-located in folder 'latex'. To aid in producing the songs files, the script
-chord_sheet_converter.py has been created. This script will take a typical 
-guitar chord sheet found online, where chords are placed above words using 
-spaces, and partially convert it into a proper song file. You can access this 
-tool within the praisetex GUI or run the following:
+All song files must adhere to the format shown in exampleSong.tex,
+which is located in folder 'latex'. To aid in producing the songs
+files, the script chord_sheet_converter.py has been created. This
+script will take a typical guitar chord sheet found online, where
+chords are placed above words using spaces, and partially convert it
+into a proper song file. You can access this tool within the praisetex
+GUI or run the following:
 
     python chord_sheet_converter.py [filename]
 
 
-The output will be named: [filename].tex. The user will have to edit the file 
-further, in order for it to be usable by praiseTex. This script took care of 
-the tedious part of placing chords in the correct position within lyrics.
+The output will be named: [filename].tex. The user will have to edit
+the file further, in order for it to be usable by praiseTex. This
+script only took care of the tedious part of placing chords in the
+correct position within lyrics.
 
-Warning:
-Do not edit the files chords.tex and slides.tex. They are used as templates 
-for producing the repective files. Folder structure is important. Please place 
-song files within the 'songs' subfolder.
+Important:
+Do not edit the files chords.tex and slides.tex. They are used as
+templates for producing the repective files. Folder structure is
+important, therefore please place song files within the 'songs'
+subfolder.
