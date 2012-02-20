@@ -243,7 +243,8 @@ class PraiseTexGUI(object):
 
         # compile document
         self.updateStatus("Compiling songs")
-        error = subprocess.call(["pdflatex", "-halt-on-error", "stmp.tex"])
+        #error = subprocess.call(["pdflatex", "-halt-on-error", "stmp.tex"])
+        error = subprocess.call(["pdflatex", "-halt-on-error",  "\\pdfminorversion=4", "\\input{stmp.tex}"])
         if error:
             self.updateStatus("pdflatex has failed")
         else:
