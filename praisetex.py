@@ -155,7 +155,7 @@ class PraiseTexGUI(object):
         # add song files
         self.songs = os.listdir(self.songdir)
         # filter out song files ending with tex file extension
-        self.songs = [song for song in self.songs if song.endswith('tex') or song.endswith('---')]
+        self.songs = [song for song in self.songs if song.endswith('tex') or song.endswith('_')]
         self.songs.sort() # alphabetize
         for song in self.songs:
             self.availableSongs.insert(END, song)
