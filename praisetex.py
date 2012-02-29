@@ -23,6 +23,7 @@ sheets"""
 
 import os
 import subprocess
+from collections import deque
 try:
     # if using python2.x
     from Tkinter import *
@@ -274,6 +275,43 @@ class PraiseTexGUI(object):
             converter = csc.ChordConverter()
             converter.convert(filename)
             self.updateStatus("Wrote file: {}".format(filename + ".tex"))
+
+
+class Song(object):
+    """Representing a song file."""
+    def __init__(self, filename):
+        self.filename = filename
+        with open(filename, 'r') as f:
+            self.text = f.readlines()
+
+    def write(self, filename):
+        if filename == self.filename:
+            raise NameError("Cannot overwrite original file '{}', please choose another filename.".format(self.filename))
+        with open(filename, 'w') as f:
+            for line in self.text:
+                f.write(line)
+
+
+class ChordMap(object):
+    """A dictionary of chords used for transposition"""
+    def __init__(self, nHalfSteps, preferSharps=True):
+        self.halfsteps = int(nHalfSteps)
+        if preferSharps:
+            self.chords = ['A', 'A\\#', 'B', 'C', 'C\\#', 'D', 'D\\#', 'E', 
+                           'F', 'F\\#', 'G', 'G\\#']
+        else:
+            self.chords = ['A', 'B$\\flat$', 'B', 'C', 'D$\\flat$', 'D', 
+                           'E$\\flat$', 'E', 'F', 'G$\\flat$', 'G', 
+                           'A$\\flat$']
+
+        # map the original chords to the new transposed ones
+        original = deque(self.chords)
+        transposed = deque(self.chords)
+        transposed.rotate(-nHalfSteps) # shift by number of half steps
+        self.chordDict = dict(zip(original, transposed))
+
+    def __getitem__(self, chord):
+        return self.chordDict[chord]
 
 
 if __name__ == '__main__':
