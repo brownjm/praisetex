@@ -21,20 +21,27 @@
 """praisetex.py - Program used to generate presentation slides and chords 
 sheets"""
 
+import sys
 import os
 import subprocess
 from collections import deque
-try:
-    # if using python2.x
-    from Tkinter import *
-    import tkFileDialog
-except ImportError:
+
+if sys.version_info[:2] == (2, 7): # if using python2.7+
     try:
-        # if using python3.x
-        from tkinter import *
-        import tkinter.filedialog as tkFileDialog
+        from Tkinter import *
+        import tkFileDialog as filedialog
     except ImportError:
         raise ImportError("Tkinter for Python is not installed")
+
+elif sys.version_info[0] == 3:
+    try: # if using python3.x+
+        from tkinter import *
+        from tkinter import filedialog
+    except ImportError:
+        raise ImportError("Tkinter for Python is not installed")
+
+else:
+    raise "Must use Python version 2.7+ or 3.x+"
 
 import chord_sheet_converter as csc
 
@@ -164,7 +171,7 @@ class PraiseTexGUI(object):
 
     def openDirectory(self):
         """Selects directory for songs"""
-        dirname = tkFileDialog.askdirectory(parent=root, initialdir=self.songdir, title='Please select a directory')
+        dirname = filedialog.askdirectory(parent=root, initialdir=self.songdir, title='Please select a directory')
         if len(dirname) > 0:
             self.songdir = dirname
 
@@ -270,7 +277,7 @@ class PraiseTexGUI(object):
         self.status.config(text=message)
 
     def convert(self):
-        filename = tkFileDialog.askopenfilename()
+        filename = filedialog.askopenfilename()
         if len(filename) > 0:
             converter = csc.ChordConverter()
             converter.convert(filename)
