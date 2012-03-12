@@ -25,6 +25,7 @@ import sys
 import os
 import subprocess
 from collections import deque
+import re
 
 if sys.version_info[:2] == (2, 7): # if using python2.7+
     try:
@@ -284,20 +285,42 @@ class PraiseTexGUI(object):
             self.updateStatus("Wrote file: {}".format(filename + ".tex"))
 
 
+
+latexcommand = r'\\(\w+)\{([^{]*)\}'
+
 class Song(object):
-    """Representing a song file."""
+    """Representing a song file"""
     def __init__(self, filename):
         self.filename = filename
+        self.commands = []
+
         with open(filename, 'r') as f:
             self.text = f.readlines()
+        self.parse()
 
     def write(self, filename):
+        """Write the song to a file (protects against overwriting original)"""
         if filename == self.filename:
             raise NameError("Cannot overwrite original file '{}', please choose another filename.".format(self.filename))
         with open(filename, 'w') as f:
             for line in self.text:
                 f.write(line)
 
+    def parse(self):
+        """Parse contents of song and build a dictionary of its attributes"""
+        linenum = 0
+        for line in self.text:
+            # matches latex command pattern: \command{argument}
+            matches = re.finditer(latexcommand, line)
+            for match in matches:
+                #print(match.groups(), linenum, match.regs[-1])
+                command, arg = match.groups()
+                span = match.regs[-1]
+                self.commands.append((command, arg, linenum, span))
+            linenum += 1
+
+
+        
 
 class ChordMap(object):
     """A dictionary of chords used for transposition"""
@@ -322,6 +345,8 @@ class ChordMap(object):
 
 
 if __name__ == '__main__':
-    root = Tk()
-    gui = PraiseTexGUI(root)
-    root.mainloop()
+    #root = Tk()
+    #gui = PraiseTexGUI(root)
+    #root.mainloop()
+    s = Song('songs/Enough.tex')
+    s.parse()
