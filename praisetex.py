@@ -21,19 +21,28 @@
 """praisetex.py - Program used to generate presentation slides and chords 
 sheets"""
 
+import sys
 import os
 import subprocess
-try:
-    # if using python2.x
-    from Tkinter import *
-    import tkFileDialog
-except ImportError:
+from collections import deque
+import re
+
+if sys.version_info[:2] == (2, 7): # if using python2.7+
     try:
-        # if using python3.x
-        from tkinter import *
-        import tkinter.filedialog as tkFileDialog
+        from Tkinter import *
+        import tkFileDialog as filedialog
     except ImportError:
         raise ImportError("Tkinter for Python is not installed")
+
+elif sys.version_info[0] == 3:
+    try: # if using python3.x+
+        from tkinter import *
+        from tkinter import filedialog
+    except ImportError:
+        raise ImportError("Tkinter for Python is not installed")
+
+else:
+    raise "Must use Python version 2.7+ or 3.x+"
 
 import chord_sheet_converter as csc
 
@@ -163,7 +172,7 @@ class PraiseTexGUI(object):
 
     def openDirectory(self):
         """Selects directory for songs"""
-        dirname = tkFileDialog.askdirectory(parent=root, initialdir=self.songdir, title='Please select a directory')
+        dirname = filedialog.askdirectory(parent=root, initialdir=self.songdir, title='Please select a directory')
         if len(dirname) > 0:
             self.songdir = dirname
 
@@ -269,14 +278,75 @@ class PraiseTexGUI(object):
         self.status.config(text=message)
 
     def convert(self):
-        filename = tkFileDialog.askopenfilename()
+        filename = filedialog.askopenfilename()
         if len(filename) > 0:
             converter = csc.ChordConverter()
             converter.convert(filename)
             self.updateStatus("Wrote file: {}".format(filename + ".tex"))
 
 
+
+latexcommand = r'\\(\w+)\{([^{]*)\}'
+
+class Song(object):
+    """Representing a song file"""
+    def __init__(self, filename):
+        self.filename = filename
+        self.commands = []
+
+        with open(filename, 'r') as f:
+            self.text = f.readlines()
+        self.parse()
+
+    def write(self, filename):
+        """Write the song to a file (protects against overwriting original)"""
+        if filename == self.filename:
+            raise NameError("Cannot overwrite original file '{}', please choose another filename.".format(self.filename))
+        with open(filename, 'w') as f:
+            for line in self.text:
+                f.write(line)
+
+    def parse(self):
+        """Parse contents of song and build a dictionary of its attributes"""
+        linenum = 0
+        for line in self.text:
+            # matches latex command pattern: \command{argument}
+            matches = re.finditer(latexcommand, line)
+            for match in matches:
+                #print(match.groups(), linenum, match.regs[-1])
+                command, arg = match.groups()
+                span = match.regs[-1]
+                self.commands.append((command, arg, linenum, span))
+            linenum += 1
+
+
+        
+
+class ChordMap(object):
+    """A dictionary of chords used for transposition"""
+    def __init__(self, nHalfSteps, preferSharps=True):
+        self.halfsteps = int(nHalfSteps)
+        if preferSharps:
+            self.chords = ['A', 'A\\#', 'B', 'C', 'C\\#', 'D', 'D\\#', 'E', 
+                           'F', 'F\\#', 'G', 'G\\#']
+        else:
+            self.chords = ['A', 'B$\\flat$', 'B', 'C', 'D$\\flat$', 'D', 
+                           'E$\\flat$', 'E', 'F', 'G$\\flat$', 'G', 
+                           'A$\\flat$']
+
+        # map the original chords to the new transposed ones
+        original = deque(self.chords)
+        transposed = deque(self.chords)
+        transposed.rotate(-nHalfSteps) # shift by number of half steps
+        self.chordDict = dict(zip(original, transposed))
+
+    def __getitem__(self, chord):
+        return self.chordDict[chord]
+
+
 if __name__ == '__main__':
-    root = Tk()
-    gui = PraiseTexGUI(root)
-    root.mainloop()
+    #root = Tk()
+    #gui = PraiseTexGUI(root)
+    #root.mainloop()
+    s = Song('songs/Enough.tex')
+    s.parse()
