@@ -26,6 +26,7 @@ import os
 import subprocess
 from collections import deque
 import re
+import argparse
 
 if sys.version_info[:2] == (2, 7): # if using python2.7+
     try:
@@ -344,9 +345,71 @@ class ChordMap(object):
         return self.chordDict[chord]
 
 
+def runGUI():
+    root = Tk()
+    gui = PraiseTexGUI(root)
+    root.mainloop()
+
+def convert(filename):
+    for filename in args.filename:
+        print("Converting chord sheet: {}".format(filename))
+        converter = csc.ChordConverter()
+        try:
+            converter.convert(filename)
+        except IOError as ioe:
+            print(ioe)
+            sys.exit()
+
+def transpose(filename):
+    for filename in args.filename:
+        print("Transposing {} by {} half steps".format(filename, args.transpose))
+
+
+def chords(filename):
+    if len(filename) > 0:
+        print("Creating chords from: {}".format(args.filename))
+
+def slides(filename):
+    if len(filename) > 0:
+        print("Creating slides from: {}".format(args.filename))
+
+def getParser():
+    parser = argparse.ArgumentParser(description='PraiseTex: program for creating guitar chord sheets and presentation slides.')
+
+    # options compiling multiple song files
+    parser.add_argument(action='store', dest='filename', nargs='*')
+    parser.add_argument('-c', '--chords', action='store_true', default=False, 
+                        help='create chord sheets from provided song files')
+    parser.add_argument('-s', '--slides', action='store_true', default=False, 
+                        help='create presentation slides from provided song files')
+
+    # options for altering song files
+    parser.add_argument('--convert', action='store_true', default=False, 
+                        help='convert guitar chord sheet into praiseTex song file')
+    parser.add_argument('--transpose', action='store', type=int, metavar='N',
+                        help='transpose song file by number of half steps')
+    return parser
+
+
+
 if __name__ == '__main__':
-    #root = Tk()
-    #gui = PraiseTexGUI(root)
-    #root.mainloop()
-    s = Song('songs/Enough.tex')
-    s.parse()
+    # command line parsing and handling
+    parser = getParser()
+    args = parser.parse_args()
+
+    if args.convert: # converting chord sheet to praisetex song file
+        convert(args.filename)
+
+    elif args.transpose is not None: # transposing song
+        transpose(args.filename)
+        
+    elif args.chords or args.slides: # creating chords or slides
+        if args.chords:
+            chords(args.filename)
+
+        if args.slides:
+            slides(args.filename)
+
+    else:
+        runGUI()
+
