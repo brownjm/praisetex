@@ -27,6 +27,7 @@ import subprocess
 from collections import deque
 import re
 import argparse
+import glob
 
 if sys.version_info[:2] == (2, 7): # if using python2.7+
     try:
@@ -46,6 +47,7 @@ else:
     raise "Must use Python version 2.7+ or 3.x+"
 
 import chord_sheet_converter as csc
+
 
 class PraiseTexGUI(object):
     """Graphical interface for selecting songs and compiling them"""
@@ -287,17 +289,51 @@ class PraiseTexGUI(object):
 
 
 
-latexcommand = r'\\(\w+)\{([^{]*)\}'
+
+
+class PraiseTex(object):
+    """Class for producing chords and slides from song files"""
+    def __init__(self, songdir="songs"):
+        self.songdir = songdir
+        self.songs = {}
+        self.compile = []
+
+    def refreshSongList(self):
+        """Reload available songs found in songs directory"""
+        self.songs.clear()
+        filenames = os.listdir(self.songdir)
+        # filter song filenames ending with tex or underscore
+        filenames = [song for song in filenames if song.endswith('tex') or song.endswith('_')]
+        songs = [Song(os.path.join(self.songdir, fn)) for fn in filenames]
+        self.songs = dict([(song.title, song) for s in songs])
+        return self.songs.keys()
+
+    def setSongDirectory(self, directory):
+        """Set directory containing song files"""
+        if len(directory) > 0:
+            self.songdir = directory
+
+    def addSong(self, index):
+        if index < len(self.filenames):
+            n = self.filenames.index()
+
+
+latexCommandPattern = r'\\(\w+)\{([^{]*)\}'
+# maps song class attribute to latex command
+commandDict = {'title':'songtitle',
+               'author':'by',
+               'comment':'comment'}
 
 class Song(object):
     """Representing a song file"""
-    def __init__(self, filename):
+    def __init__(self, filename, commands=commandDict):
         self.filename = filename
-        self.commands = []
+        self.commands = commands
 
         with open(filename, 'r') as f:
-            self.text = f.readlines()
-        self.parse()
+            self.text = f.read()
+
+        self.getAttributes()
 
     def write(self, filename):
         """Write the song to a file (protects against overwriting original)"""
@@ -307,20 +343,30 @@ class Song(object):
             for line in self.text:
                 f.write(line)
 
-    def parse(self):
-        """Parse contents of song and build a dictionary of its attributes"""
+    def getAttributes(self):
+        for attr, latexcommand in self.commands.items():
+            m = re.search(r'\\' + latexcommand + r'\{([^{]*)\}', self.text)
+            if m is not None:
+                setattr(self, attr, m.groups()[0])
+
+    def locateCommands(self):
+        """Build a list of songs commands and their locations"""
+        with open(self.filename, 'r') as f:
+            text = f.readlines()
+
         linenum = 0
-        for line in self.text:
+        commands = []
+
+        for line in text:
             # matches latex command pattern: \command{argument}
-            matches = re.finditer(latexcommand, line)
+            matches = re.finditer(latexCommandPattern, line)
             for match in matches:
-                #print(match.groups(), linenum, match.regs[-1])
                 command, arg = match.groups()
                 span = match.regs[-1]
-                self.commands.append((command, arg, linenum, span))
+                commands.append((command, arg, linenum, span))
             linenum += 1
 
-
+        return commands
         
 
 class ChordMap(object):
