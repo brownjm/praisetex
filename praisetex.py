@@ -350,21 +350,39 @@ class Song(object):
             if m is not None:
                 setattr(self, attr, m.groups()[0])
 
-    def splitByChord(self):
-        """Find chord commands, split strings by them, and return a list of text and chords"""
+    def transpose(self, numHalfSteps):
+        """Transpose each chord within song by specified number of half steps"""
+        cm = ChordMap(numHalfSteps)
         stringList = []
         text = self.text
-
+        
         match = re.search(chordCommand, text)
         while match is not None:
             before = text[:match.start()] # up to chord
             chord = text[match.start():match.end()] # chord
             stringList.append(before)
-            stringList.append(chord)
+
+            # find which command matched and grab actual chord
+            ch, left, line = match.groups()
+            if ch is not None:
+                command = r'\\chord{{{}}}'
+                letter = ch
+            elif left is not None:
+                command = r'\\chordleft{{{}}}'
+                letter = left
+            elif line is not None:
+                command = r'\\chordline{{{}}}'
+                letter = line
+            else:
+                raise 'No chord match found'
+            
+            newletter = cm[letter] # transposition
+            stringList.append(command.format(newletter)) # add new chord
             text = text[match.end():] # focus on remaining string
             match = re.search(chordCommand, text)
+
         stringList.append(text) # add final string
-        return stringList
+        return ''.join(stringList)
 
     def locateCommands(self):
         """Build a list of songs commands and their locations"""
