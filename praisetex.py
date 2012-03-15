@@ -319,10 +319,11 @@ class PraiseTex(object):
 
 
 latexCommandPattern = r'\\(\w+)\{([^{]*)\}'
-# maps song class attribute to latex command
+# maps song class attribute to latex command name
 commandDict = {'title':'songtitle',
                'author':'by',
                'comment':'comment'}
+chordCommand = r'\\chord\{([^{}]*)\}|\\chordleft\{([^{}]*)\}|\\chordline\{([^{}]*)\}'
 
 class Song(object):
     """Representing a song file"""
@@ -348,6 +349,22 @@ class Song(object):
             m = re.search(r'\\' + latexcommand + r'\{([^{]*)\}', self.text)
             if m is not None:
                 setattr(self, attr, m.groups()[0])
+
+    def splitByChord(self):
+        """Find chord commands, split strings by them, and return a list of text and chords"""
+        stringList = []
+        text = self.text
+
+        match = re.search(chordCommand, text)
+        while match is not None:
+            before = text[:match.start()] # up to chord
+            chord = text[match.start():match.end()] # chord
+            stringList.append(before)
+            stringList.append(chord)
+            text = text[match.end():] # focus on remaining string
+            match = re.search(chordCommand, text)
+        stringList.append(text) # add final string
+        return stringList
 
     def locateCommands(self):
         """Build a list of songs commands and their locations"""
