@@ -359,30 +359,32 @@ class Song(object):
         match = re.search(chordCommand, text)
         while match is not None:
             before = text[:match.start()] # up to chord
-            chord = text[match.start():match.end()] # chord
+            chord = text[match.start():match.end()] # chord       
             stringList.append(before)
-
+ 
             # find which command matched and grab actual chord
             ch, left, line = match.groups()
             if ch is not None:
-                command = r'\\chord{{{}}}'
+                command = '\chord{{{}}}'
                 letter = ch
             elif left is not None:
-                command = r'\\chordleft{{{}}}'
+                command = '\chordleft{{{}}}'
                 letter = left
             elif line is not None:
-                command = r'\\chordline{{{}}}'
+                command = '\chordline{{{}}}'
                 letter = line
             else:
                 raise 'No chord match found'
             
-            newletter = cm[letter] # transposition
+            newletter = cm.transpose(letter) # transposition
+            #print(newletter, command, before)
             stringList.append(command.format(newletter)) # add new chord
             text = text[match.end():] # focus on remaining string
             match = re.search(chordCommand, text)
+            match = 1
 
         stringList.append(text) # add final string
-        return ''.join(stringList)
+        self.text = ''.join(stringList)
 
     def locateCommands(self):
         """Build a list of songs commands and their locations"""
@@ -424,6 +426,15 @@ class ChordMap(object):
 
     def __getitem__(self, chord):
         return self.chordDict[chord]
+
+    def transpose(self, chord):
+        chordstr = re.split(r'(/| |\d|m|M|sus|maj)', chord) # split by /, space and number
+        newChordList = []
+        for chord in chordstr:
+            if chord in self.chords:
+                chord = self.chordDict[chord]
+            newChordList.append(chord)
+        return ''.join(newChordList)
 
 
 def runGUI():
