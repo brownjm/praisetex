@@ -162,7 +162,7 @@ class PraiseTexGUI(object):
 
     def run(self):
         """Start event loop of GUI"""
-        self.self.root.mainloop()
+        self.root.mainloop()
 
     def refreshSongList(self):
         """Sync up the filenames in songlist with files in directory"""
