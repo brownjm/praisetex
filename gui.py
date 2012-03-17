@@ -179,6 +179,7 @@ class PraiseTexGUI(object):
         dirname = filedialog.askdirectory(parent=self.root, initialdir=self.praisetex.getSongDirectory(), title='Please select a directory')
         if len(dirname) > 0:
             self.praisetex.setSongDirectory(dirname)
+            self.updateStatus("Song directory set to {0}".format(dirname))
 
     def addSong(self):
         """Add song to compile list"""
