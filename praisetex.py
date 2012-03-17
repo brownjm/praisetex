@@ -50,9 +50,15 @@ def convert(filename):
             print(ioe)
             sys.exit()
 
-def transpose(filename):
-    for filename in args.filename:
-        print("Transposing {} by {} half steps".format(filename, args.transpose))
+def transpose(filenames, numHalfSteps):
+    if numHalfSteps != 0:
+        for filename in filenames:
+            print("Transposing {} by {} half steps".format(filename, numHalfSteps))
+            s = core.Song(filename)
+            s.transpose(numHalfSteps)
+            newfilename = '{0}{1:+2d}'.format(filename, numHalfSteps)
+            s.write(newfilename)
+            print("Wrote new file: {}".format(newfilename))
 
 
 def chords(filename):
@@ -91,7 +97,7 @@ if __name__ == '__main__':
         convert(args.filename)
 
     elif args.transpose is not None: # transposing song
-        transpose(args.filename)
+        transpose(args.filename, args.transpose)
         
     elif args.chords or args.slides: # creating chords or slides
         if args.chords:
