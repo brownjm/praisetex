@@ -172,6 +172,10 @@ class PraiseTex(object):
         if len(directory) > 0:
             self.songdir = directory
 
+    def getSongDirectory(self):
+        """Return current song directory"""
+        return self.songdir
+
     def addSong(self, index):
         if index < len(self.filenames):
             n = self.filenames.index()

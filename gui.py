@@ -52,9 +52,8 @@ class PraiseTexGUI(object):
     """Graphical interface for selecting songs and compiling them"""
     def __init__(self, songdir="songs"):
         # data
-        self.songdir = songdir
         self.songs = []
-        self.praisetex = PraiseTex(self.songdir)
+        self.praisetex = PraiseTex(songdir)
         self.root = Tk()
 
         # dimensions for layout
@@ -173,13 +172,13 @@ class PraiseTexGUI(object):
         self.songs = self.praisetex.refreshSongList()
         for song in self.songs:
             self.availableSongs.insert(END, song)
-        self.updateStatus("{0} songs found in directory {1}".format(len(self.songs), self.songdir))
+        self.updateStatus("{0} songs found in directory {1}".format(len(self.songs), self.praisetex.getSongDirectory()))
 
     def openDirectory(self):
         """Selects directory for songs"""
-        dirname = filedialog.askdirectory(parent=self.root, initialdir=self.songdir, title='Please select a directory')
+        dirname = filedialog.askdirectory(parent=self.root, initialdir=self.praisetex.getSongDirectory(), title='Please select a directory')
         if len(dirname) > 0:
-            self.songdir = dirname
+            self.praisetex.setSongDirectory(dirname)
 
     def addSong(self):
         """Add song to compile list"""
@@ -275,7 +274,7 @@ class PraiseTexGUI(object):
     def createSongString(self):
         """Construct latex \input strings containing selected songs"""
         songList = self.songsToCompile.get(0, END)
-        folder = os.path.join(self.songdir, '')                
+        folder = os.path.join(self.praisetex.getSongDirectory(), '')                
         return "".join(["\input{{{0}{1}}}\n".format(folder, song) for song in songList])
 
     def updateStatus(self, message):
