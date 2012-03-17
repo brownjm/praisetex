@@ -30,15 +30,15 @@ import argparse
 import glob
 
 import core
+import gui
 import chord_sheet_converter as csc
 
 # get praisetex folders's absolute path
 praisetex_dir = os.path.dirname(os.path.abspath(__file__))
 
 def runGUI():
-    root = core.Tk()
-    gui = core.PraiseTexGUI(root)
-    root.mainloop()
+    app = gui.PraiseTexGUI()
+    app.run()
 
 def convert(filename):
     for filename in args.filename:
