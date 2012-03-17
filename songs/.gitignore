@@ -2,8 +2,8 @@
 !.gitignore
 
 # formatting tools
-!_ColumnBreak_
-!_PageBreak_
+!___ColumnBreak___
+!___PageBreak___
 
 # public domain songs
 !AllHailThePower.tex

@@ -162,7 +162,7 @@ class PraiseTex(object):
         self.songs.clear()
         filenames = os.listdir(self.songdir)
         # keep only song filenames ending with tex or underscore
-        filenames = [song for song in filenames if song.endswith('tex') or song.endswith('_')]
+        filenames = [song for song in filenames if song.endswith('.tex') or song.endswith('___')]
         songs = [Song(os.path.join(self.songdir, fn)) for fn in filenames]
         self.songs = dict([(song.title, song) for song in songs])
         return self.songs.keys()
