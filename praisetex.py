@@ -37,7 +37,7 @@ import chord_sheet_converter as csc
 praisetex_dir = os.path.dirname(os.path.abspath(__file__))
 
 def runGUI():
-    app = gui.PraiseTexGUI()
+    app = gui.PraiseTexGUI(os.path.join(praisetex_dir, "songs"))
     app.run()
 
 def convert(filename):
