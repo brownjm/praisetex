@@ -165,7 +165,9 @@ class PraiseTex(object):
         filenames = [song for song in filenames if song.endswith('.tex') or song.endswith('___')]
         songs = [Song(os.path.join(self.songdir, fn)) for fn in filenames]
         self.songs = dict([(song.title, song) for song in songs])
-        return self.songs.keys()
+        songlist = list(self.songs.keys())
+        songlist.sort() # alphabetize
+        return songlist
 
     def setSongDirectory(self, directory):
         """Set directory containing song files"""
