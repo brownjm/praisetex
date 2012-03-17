@@ -21,17 +21,20 @@
 """gui.py - A tkinter frontend to the praiseTex program"""
 
 import sys
+import os
 
 if sys.version_info[:2] == (2, 7): # if using python2.7+
     try:
-        from Tkinter import *
+        from Tkinter import Tk, Menu, Frame, Label, Listbox, Button, Scrollbar,\
+            VERTICAL, EXTENDED, LEFT, RIGHT, TOP, BOTTOM, Y, W, END
         import tkFileDialog as filedialog
     except ImportError:
         raise ImportError("Tkinter for Python is not installed")
 
 elif sys.version_info[0] == 3:
     try: # if using python3.x+
-        from tkinter import *
+        from tkinter import Tk, Menu, Frame, Label, Listbox, Button, Scrollbar,\
+            VERTICAL, EXTENDED, LEFT, RIGHT, TOP, BOTTOM, Y, W, END
         from tkinter import filedialog
     except ImportError:
         raise ImportError("Tkinter for Python is not installed")
@@ -280,3 +283,5 @@ class PraiseTexGUI(object):
             self.updateStatus("Wrote file: {}".format(filename + ".tex"))
 
 
+if __name__ == '__main__':
+    p = PraiseTexGUI(Tk())
