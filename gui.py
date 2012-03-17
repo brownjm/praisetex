@@ -22,19 +22,22 @@
 
 import sys
 import os
+import subprocess
 
 if sys.version_info[:2] == (2, 7): # if using python2.7+
     try:
-        from Tkinter import Tk, Menu, Frame, Label, Listbox, Button, Scrollbar,\
-            VERTICAL, EXTENDED, LEFT, RIGHT, TOP, BOTTOM, Y, W, END
+        from Tkinter import Tk, Menu, Frame, Label, Listbox, Button, \
+            Scrollbar, VERTICAL, EXTENDED, LEFT, RIGHT, TOP, BOTTOM, \
+            Y, W, END
         import tkFileDialog as filedialog
     except ImportError:
         raise ImportError("Tkinter for Python is not installed")
 
 elif sys.version_info[0] == 3:
     try: # if using python3.x+
-        from tkinter import Tk, Menu, Frame, Label, Listbox, Button, Scrollbar,\
-            VERTICAL, EXTENDED, LEFT, RIGHT, TOP, BOTTOM, Y, W, END
+        from tkinter import Tk, Menu, Frame, Label, Listbox, Button, \
+            Scrollbar, VERTICAL, EXTENDED, LEFT, RIGHT, TOP, BOTTOM, \
+            Y, W, END
         from tkinter import filedialog
     except ImportError:
         raise ImportError("Tkinter for Python is not installed")
@@ -42,14 +45,17 @@ elif sys.version_info[0] == 3:
 else:
     raise "Must use Python version 2.7+ or 3.x+"
 
+from core import PraiseTex
 
 
 class PraiseTexGUI(object):
     """Graphical interface for selecting songs and compiling them"""
-    def __init__(self, root, songdir="songs"):
+    def __init__(self, songdir="songs"):
         # data
         self.songdir = songdir
         self.songs = []
+        self.praisetex = PraiseTex(self.songdir)
+        self.root = Tk()
 
         # dimensions for layout
         #window_width = 600
@@ -66,27 +72,27 @@ class PraiseTexGUI(object):
         label_font = ("Arial", 14)
 
         # window properties
-        root.title("praiseTex")
+        self.root.title("praiseTex")
         # set initial size of window
-        #root.geometry("{0}x{1}".format(window_width, window_height))
+        #self.root.geometry("{0}x{1}".format(window_width, window_height))
 
         # menu
-        menubar = Menu(root)
+        menubar = Menu(self.root)
         filemenu = Menu(menubar, tearoff=0)
         filemenu.add_command(label="Open Directory", command=self.openDirectory)
-        filemenu.add_command(label="Exit", command=root.quit)
+        filemenu.add_command(label="Exit", command=self.root.quit)
         menubar.add_cascade(label="File", menu=filemenu)
         toolmenu = Menu(menubar, tearoff=0)
         toolmenu.add_command(label="Convert Chord Sheet", command=self.convert)
         menubar.add_cascade(label="Tools", menu=toolmenu)
-        root.config(menu=menubar)
+        self.root.config(menu=menubar)
 
         # left section
-        self.songsToCompileTitle = Label(root, text="Songs to Compile", 
+        self.songsToCompileTitle = Label(self.root, text="Songs to Compile", 
                                          font=label_font,
                                          padx=label_padx, pady=label_pady)
         self.songsToCompileTitle.grid(row=0, column=0)
-        self.songsToCompileFrame = Frame(root)
+        self.songsToCompileFrame = Frame(self.root)
         self.songsToCompileFrame.grid(row=1, column=0, 
                                       padx=frame_padx, pady=frame_pady)
         self.songsToCompileScroll = Scrollbar(self.songsToCompileFrame,
@@ -100,7 +106,7 @@ class PraiseTexGUI(object):
         self.songsToCompileScroll.pack(side=RIGHT, fill=Y)
         self.songsToCompile.pack()
         
-        self.compileButtonFrame = Frame(root)
+        self.compileButtonFrame = Frame(self.root)
         self.compileButtonFrame.grid(row=2, column=0)
         self.chordsButton = Button(self.compileButtonFrame, 
                                    text="Chords", 
@@ -112,7 +118,7 @@ class PraiseTexGUI(object):
         self.slidesButton.pack(side=RIGHT, padx=button_padx, pady=button_pady)
 
         # middle section
-        self.addRemoveButtonFrame = Frame(root)
+        self.addRemoveButtonFrame = Frame(self.root)
         self.addRemoveButtonFrame.grid(row=1, column=1)
         self.addSongButton = Button(self.addRemoveButtonFrame,
                                     text="<<", 
@@ -124,13 +130,13 @@ class PraiseTexGUI(object):
         self.removeSongButton.pack(side=BOTTOM)
 
         # right section
-        self.availableSongsTitle = Label(root, 
+        self.availableSongsTitle = Label(self.root, 
                                          text="Available Songs",
                                          font=label_font,
                                          padx=label_padx, 
                                          pady=label_pady)
         self.availableSongsTitle.grid(row=0, column=2)
-        self.availableSongsFrame = Frame(root)
+        self.availableSongsFrame = Frame(self.root)
         self.availableSongsFrame.grid(row=1, column=2,
                                       padx=frame_padx, pady=frame_pady)
         self.availableSongsScroll = Scrollbar(self.availableSongsFrame, 
@@ -143,34 +149,35 @@ class PraiseTexGUI(object):
         self.availableSongsScroll.config(command=self.availableSongs.yview)
         self.availableSongsScroll.pack(side=RIGHT, fill=Y)
         self.availableSongs.pack()
-        self.button = Button(root, 
+        self.button = Button(self.root, 
                              text="Refresh",  
-                             command=self.refreshSonglist)
+                             command=self.refreshSongList)
         self.button.grid(row=2, column=2)
 
         # status bar
-        self.status = Label(root, text="Ready", padx="1m")
+        self.status = Label(self.root, text="Ready", padx="1m")
         self.status.grid(row=3, column=0, columnspan=3, sticky=W)
 
-        self.refreshSonglist()
+        self.refreshSongList()
 
-    def refreshSonglist(self):
+    def run(self):
+        """Start event loop of GUI"""
+        self.self.root.mainloop()
+
+    def refreshSongList(self):
         """Sync up the filenames in songlist with files in directory"""
         # clear song list
         self.availableSongs.delete(0, END)
 
         # add song files
-        self.songs = os.listdir(self.songdir)
-        # filter out song files ending with tex file extension
-        self.songs = [song for song in self.songs if song.endswith('tex') or song.endswith('_')]
-        self.songs.sort() # alphabetize
+        self.songs = self.praisetex.refreshSongList()
         for song in self.songs:
             self.availableSongs.insert(END, song)
         self.updateStatus("{0} songs found in directory {1}".format(len(self.songs), self.songdir))
 
     def openDirectory(self):
         """Selects directory for songs"""
-        dirname = filedialog.askdirectory(parent=root, initialdir=self.songdir, title='Please select a directory')
+        dirname = filedialog.askdirectory(parent=self.root, initialdir=self.songdir, title='Please select a directory')
         if len(dirname) > 0:
             self.songdir = dirname
 
@@ -284,4 +291,5 @@ class PraiseTexGUI(object):
 
 
 if __name__ == '__main__':
-    p = PraiseTexGUI(Tk())
+    p = PraiseTexGUI()
+    p.run()
