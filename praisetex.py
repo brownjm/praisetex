@@ -32,7 +32,8 @@ import glob
 import core
 import chord_sheet_converter as csc
 
-
+# get praisetex folders's absolute path
+praisetex_dir = os.path.dirname(os.path.abspath(__file__))
 
 def runGUI():
     root = core.Tk()
