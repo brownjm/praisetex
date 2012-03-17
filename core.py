@@ -22,6 +22,7 @@
 
 from collections import deque
 import re
+import os
 
 
 # regex pattern for any latex command with the form: \command{arg}
@@ -71,6 +72,7 @@ class Song(object):
     """Representing a song file"""
     def __init__(self, filename, commands=commandDict):
         self.filename = filename
+        self.title = filename # fallback name
         self.commands = commands
 
         with open(filename, 'r') as f:
@@ -159,10 +161,10 @@ class PraiseTex(object):
         """Reload available songs found in songs directory"""
         self.songs.clear()
         filenames = os.listdir(self.songdir)
-        # filter song filenames ending with tex or underscore
+        # keep only song filenames ending with tex or underscore
         filenames = [song for song in filenames if song.endswith('tex') or song.endswith('_')]
         songs = [Song(os.path.join(self.songdir, fn)) for fn in filenames]
-        self.songs = dict([(song.title, song) for s in songs])
+        self.songs = dict([(song.title, song) for song in songs])
         return self.songs.keys()
 
     def setSongDirectory(self, directory):
@@ -173,3 +175,7 @@ class PraiseTex(object):
     def addSong(self, index):
         if index < len(self.filenames):
             n = self.filenames.index()
+
+
+if __name__ == '__main__':
+    p = PraiseTex()
