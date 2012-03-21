@@ -178,9 +178,10 @@ class PraiseTex(object):
         """Return current song directory"""
         return self.songdir
 
-    def addSong(self, index):
-        if index < len(self.filenames):
-            n = self.filenames.index()
+    def addSong(self, songtitle):
+        song = self.songs[songtitle]
+        self.compile.append(song)
+
 
 
 if __name__ == '__main__':

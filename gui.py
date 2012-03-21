@@ -185,7 +185,9 @@ class PraiseTexGUI(object):
         """Add song to compile list"""
         songindexes = self.availableSongs.curselection()
         for index in songindexes:
-            self.songsToCompile.insert(END, self.availableSongs.get(index))
+            songtitle = self.availableSongs.get(index)
+            self.praisetex.addSong(songtitle)
+            self.songsToCompile.insert(END, songtitle)
 
         self.updateStatus("{0} songs added".format(len(songindexes)))
 
