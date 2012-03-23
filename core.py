@@ -121,12 +121,10 @@ class Song(object):
                 raise 'No chord match found'
             
             newletter = cm.transpose(letter) # transposition
-            #print(newletter, command, before)
             stringList.append(command.format(newletter)) # add new chord
             text = text[match.end():] # focus on remaining string
-            match = re.search(chordCommand, text)
-            match = 1
-
+            match = re.search(chordCommand, text) # search rest of text
+            
         stringList.append(text) # add final string
         self.text = ''.join(stringList)
 
