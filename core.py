@@ -177,9 +177,15 @@ class PraiseTex(object):
         return self.songdir
 
     def addSong(self, songtitle):
+        """Add song to compile list"""
         song = self.songs[songtitle]
         self.compile.append(song)
 
+    def removeSong(self, index):
+        """Remove song from compile list"""
+        index = int(index)
+        if index < len(self.compile):
+            self.compile.pop(index)
 
 
 if __name__ == '__main__':

@@ -196,6 +196,7 @@ class PraiseTexGUI(object):
         songindexes = list(self.songsToCompile.curselection())
         songindexes.reverse()
         for index in songindexes:
+            self.praisetex.removeSong(index)
             self.songsToCompile.delete(index)
             
         self.updateStatus("{0} songs removed".format(len(songindexes)))
