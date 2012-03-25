@@ -247,7 +247,7 @@ class PraiseTex(object):
         # compile document
         error = subprocess.call(["pdflatex", "-halt-on-error",  "\\pdfminorversion=4", "\\input{stmp.tex}"])
         if not error:
-            os.rename("stmp.pdf", "chords.pdf")
+            os.rename("stmp.pdf", "slides.pdf")
 
         # remove temporary files
         fnames = os.listdir('.')
