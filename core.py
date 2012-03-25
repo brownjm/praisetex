@@ -24,6 +24,7 @@ from collections import deque
 import re
 import os
 import subprocess
+import chord_sheet_converter as csc
 
 
 # regex pattern for any latex command with the form: \command{arg}
@@ -255,6 +256,11 @@ class PraiseTex(object):
                 os.remove(f)
                 
         return error
+
+    def convert(self, filename):
+        """Converts online guitar chord sheet format into song file format"""
+        converter = csc.ChordConverter()
+        converter.convert(filename)
 
 
 if __name__ == '__main__':

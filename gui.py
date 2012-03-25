@@ -226,8 +226,7 @@ class PraiseTexGUI(object):
     def convert(self):
         filename = filedialog.askopenfilename()
         if len(filename) > 0:
-            converter = csc.ChordConverter()
-            converter.convert(filename)
+            self.praisetex.convert(filename)
             self.updateStatus("Wrote file: {}".format(filename + ".tex"))
 
 
