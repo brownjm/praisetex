@@ -203,83 +203,21 @@ class PraiseTexGUI(object):
 
     def compileChords(self):
         """Compile a chord sheet from selected songs"""
-        self.updateStatus("Reading file latex/chords.tex")
-        # read in chords template
-        with open("latex/chords.tex", "r") as f:
-            lines = f.readlines()
-        
-        # find line number ranges for where \input{song.tex} should be
-        begin = lines.index("\\begin{multicols}{2}\n")+1
-        end = lines.index("\\end{multicols}\n")
-        top = lines[:begin]
-        bottom = lines[end:]
-        
-        # create temporary document containing songs
-        ctmp = []
-        ctmp.extend(top)
-        ctmp.append(self.createSongString())
-        ctmp.extend(bottom)
-        with open("ctmp.tex", "w") as f:
-            f.writelines(ctmp)
-
-        # compile document
-        self.updateStatus("Compiling songs")
-        error = subprocess.call(["pdflatex", "-halt-on-error", "ctmp.tex"])
+        self.updateStatus("Compiling Songs")
+        error = self.praisetex.compileChords()
         if error:
             self.updateStatus("pdflatex has failed")
         else:
-            os.rename("ctmp.pdf", "chords.pdf")
             self.updateStatus("Compiled chords.pdf")
-
-        # remove temporary files
-        fnames = os.listdir('.')
-        for f in fnames:
-            if "ctmp" in f:
-                os.remove(f)
 
     def compileSlides(self):
         """Compile slides from selected songs"""
-        self.updateStatus("Reading file latex/slides.tex")
-        # read in chords template
-        with open("latex/slides.tex", "r") as f:
-            lines = f.readlines()
-        
-        # find line number ranges for where \input{song.tex} should be
-        begin = lines.index("\\begin{document}\n")+1
-        end = lines.index("\\end{document}\n")
-        top = lines[:begin]
-        bottom = lines[end:]
-        
-        # create temporary document containing songs
-        stmp = []
-        stmp.extend(top)
-        stmp.append(self.createSongString())
-        stmp.extend(bottom)
-        with open("stmp.tex", "w") as f:
-            f.writelines(stmp)
-
-        # compile document
-        self.updateStatus("Compiling songs")
-        #error = subprocess.call(["pdflatex", "-halt-on-error", "stmp.tex"])
-        error = subprocess.call(["pdflatex", "-halt-on-error",  "\\pdfminorversion=4", "\\input{stmp.tex}"])
+        self.updateStatus("Compiling Songs")
+        error = self.praisetex.compileSlides()
         if error:
             self.updateStatus("pdflatex has failed")
         else:
-            os.rename("stmp.pdf", "slides.pdf")
             self.updateStatus("Compiled slides.pdf")
-
-        # remove temporary files
-        fnames = os.listdir('.')
-        for f in fnames:
-            if "stmp" in f:
-                os.remove(f)
-        self.updateStatus("Compiled slides.pdf")
-
-    def createSongString(self):
-        """Construct latex \input strings containing selected songs"""
-        songList = self.songsToCompile.get(0, END)
-        folder = os.path.join(self.praisetex.getSongDirectory(), '')                
-        return "".join(["\input{{{0}{1}}}\n".format(folder, song) for song in songList])
 
     def updateStatus(self, message):
         """Update the status bar"""

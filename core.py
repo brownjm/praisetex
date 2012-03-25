@@ -23,6 +23,7 @@
 from collections import deque
 import re
 import os
+import subprocess
 
 
 # regex pattern for any latex command with the form: \command{arg}
@@ -186,6 +187,74 @@ class PraiseTex(object):
         index = int(index)
         if index < len(self.compile):
             self.compile.pop(index)
+
+    def compileChords(self):
+        """Compile a chord sheet from selected songs"""
+        # read in chords template
+        with open("latex/chords.tex", "r") as f:
+            lines = f.readlines()
+
+        # find line number ranges where \input{song.tex} should be
+        begin = lines.index("\\begin{multicols}{2}\n") + 1
+        end = lines.index("\\end{multicols}\n")
+        top = lines[:begin]
+        bottom = lines[end:]
+
+        # create text from template and songs to pass to pdflatex
+        ctmp = []
+        ctmp.extend(top)
+        for song in self.compile:
+            ctmp.append(song.text)
+        ctmp.extend(bottom)
+        with open("ctmp.tex", "w") as f:
+            f.writelines(ctmp)
+
+        # compile document
+        error = subprocess.call(["pdflatex", "-halt-on-error", "ctmp.tex"])
+        if not error:
+            os.rename("ctmp.pdf", "chords.pdf")
+
+        # remove temporary files
+        fnames = os.listdir('.')
+        for f in fnames:
+            if "ctmp" in f:
+                os.remove(f)
+
+        return error
+
+    def compileSlides(self):
+        """Compile slides from selected songs"""
+        # read in chords template
+        with open("latex/slides.tex", "r") as f:
+            lines = f.readlines()
+
+        # find line number ranges where \input{song.tex} should be
+        begin = lines.index("\\begin{document}\n") + 1
+        end = lines.index("\\end{document}\n")
+        top = lines[:begin]
+        bottom = lines[end:]
+
+        # create text from template and songs to pass to pdflatex
+        stmp = []
+        stmp.extend(top)
+        for song in self.compile:
+            stmp.append(song.text)
+        stmp.extend(bottom)
+        with open("stmp.tex", "w") as f:
+            f.writelines(stmp)
+
+        # compile document
+        error = subprocess.call(["pdflatex", "-halt-on-error",  "\\pdfminorversion=4", "\\input{stmp.tex}"])
+        if not error:
+            os.rename("stmp.pdf", "chords.pdf")
+
+        # remove temporary files
+        fnames = os.listdir('.')
+        for f in fnames:
+            if "stmp" in f:
+                os.remove(f)
+                
+        return error
 
 
 if __name__ == '__main__':
