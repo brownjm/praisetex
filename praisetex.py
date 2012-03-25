@@ -61,10 +61,30 @@ def transpose(filenames, numHalfSteps):
 def chords(filename):
     if len(filename) > 0:
         print("Creating chords from: {}".format(args.filename))
+        songList = [core.Song(f).title for f in filename]
+        praisetex = core.PraiseTex()
+        praisetex.refreshSongList()
+        for songtitle in songList:
+            praisetex.addSong(songtitle)
+        error = praisetex.compileChords()
+        if error:
+            print("pdflatex has failed")
+        else:
+            print("Compiled chords.pdf")
 
 def slides(filename):
     if len(filename) > 0:
         print("Creating slides from: {}".format(args.filename))
+        songList = [core.Song(f).title for f in filename]
+        praisetex = core.PraiseTex()
+        praisetex.refreshSongList()
+        for songtitle in songList:
+            praisetex.addSong(songtitle)
+        error = praisetex.compileSlides()
+        if error:
+            print("pdflatex has failed")
+        else:
+            print("Compiled slides.pdf")
 
 def getParser():
     parser = argparse.ArgumentParser(description='PraiseTex: program for creating guitar chord sheets and presentation slides.')
