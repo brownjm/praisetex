@@ -74,7 +74,7 @@ class Song(object):
     """Representing a song file"""
     def __init__(self, filename, commands=commandDict):
         self.filename = filename
-        self.title = filename # fallback name
+        self.title = os.path.basename(filename) # fallback name
         self.commands = commands
 
         with open(filename, 'r') as f:
