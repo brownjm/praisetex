@@ -21,8 +21,6 @@
 """gui.py - A tkinter frontend to the praiseTex program"""
 
 import sys
-import os
-import subprocess
 
 if sys.version_info[:2] == (2, 7): # if using python2.7+
     try:

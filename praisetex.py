@@ -23,11 +23,8 @@ sheets"""
 
 import sys
 import os
-import subprocess
 from collections import deque
-import re
 import argparse
-import glob
 
 import core
 import gui
