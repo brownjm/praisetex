@@ -92,7 +92,7 @@ class ChordConverter(object):
         newname = filename + ".tex" # add latex extension
         with open(newname, "w") as f:
             # add song file header and write out file
-            f.write("\subsection{}\n\\by{}\n\comment{}\n")
+            f.write("\songtitle{}\n\\by{}\n\comment{}\n")
             f.writelines(self.songfilelines)
 
         # print out final status of conversion

@@ -38,10 +38,13 @@
 \renewcommand{\thesection}{\Alph{section}}
 \setcounter{section}{19}
 
+% set song title
+\newcommand{\songtitle}[1]{\subsection{#1}}
+
 % assign the author
 \newcommand{\by}[1] {
   \vspace{-2mm}
-  \hspace{11mm}\emph{By #1}\\
+  \hspace{11mm}\emph{#1}\\
   \vspace{-3mm}
 }
 
@@ -85,10 +88,10 @@
 }
 
 % place a chord above following letter
-\newcommand{\chord}[1] {$\stackrel{\makebox[0mm][l]{\hspace{1mm}\footnotesize{\textbf{#1}}}}{^{^{^{}}}}$}
+\newcommand{\chord}[1] {$\vspace{0.1mm}\stackrel{\makebox[0mm][l]{\hspace{1mm}\footnotesize{\textbf{#1\phantom{/}}}}}{^{^{^{}}}}$}
 
 % place a chord above and to the left of following letter
-\newcommand{\chordleft}[1] {$\stackrel{\makebox[0mm][r]{\hspace{1mm}\footnotesize{\textbf{#1}}}}{^{^{^{}}}}$}
+\newcommand{\chordleft}[1] {$\vspace{0.1mm}\stackrel{\makebox[0mm][r]{\hspace{1mm}\footnotesize{\textbf{#1\phantom{/}}}}}{^{^{^{}}}}$}
 
 % create a line consisting of only chords
 \newcommand{\chordline}[1] {
