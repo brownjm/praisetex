@@ -178,10 +178,12 @@ class PraiseTex(object):
         """Return current song directory"""
         return self.songdir
 
-    def addSong(self, songtitle):
+    def addSong(self, index, songtitle):
         """Add song to compile list"""
+        index = int(index)
         song = self.songs[songtitle]
-        self.compile.append(song)
+        #self.compile.append(song)
+        self.compile.insert(index, song)
 
     def removeSong(self, index):
         """Remove song from compile list"""
