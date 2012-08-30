@@ -98,11 +98,12 @@ class PraiseTexGUI(object):
                                       width=listbox_width, 
                                       height=listbox_height, 
                                       selectmode=EXTENDED,
-                                      yscrollcommand=self.songsToCompileScroll.set)
+                                      yscrollcommand=self.songsToCompileScroll.set,
+                                      exportselection=0)
         self.songsToCompileScroll.config(command=self.songsToCompile.yview)
         self.songsToCompileScroll.pack(side=RIGHT, fill=Y)
         self.songsToCompile.pack()
-        
+
         self.compileButtonFrame = Frame(self.root)
         self.compileButtonFrame.grid(row=2, column=0)
         self.chordsButton = Button(self.compileButtonFrame, 
@@ -142,10 +143,12 @@ class PraiseTexGUI(object):
                                       width=listbox_width, 
                                       height=listbox_height, 
                                       selectmode=EXTENDED, 
-                                      yscrollcommand=self.availableSongsScroll.set)
+                                      yscrollcommand=self.availableSongsScroll.set,
+                                      exportselection=0)
         self.availableSongsScroll.config(command=self.availableSongs.yview)
         self.availableSongsScroll.pack(side=RIGHT, fill=Y)
         self.availableSongs.pack()
+
         self.button = Button(self.root, 
                              text="Refresh",  
                              command=self.refreshSongList)
@@ -181,13 +184,19 @@ class PraiseTexGUI(object):
 
     def addSong(self):
         """Add song to compile list"""
-        songindexes = self.availableSongs.curselection()
-        for index in songindexes:
-            songtitle = self.availableSongs.get(index)
+        selectedSongs = self.availableSongs.curselection()
+        for song in selectedSongs:
+            songtitle = self.availableSongs.get(song)
             self.praisetex.addSong(songtitle)
-            self.songsToCompile.insert(END, songtitle)
 
-        self.updateStatus("{0} songs added".format(len(songindexes)))
+            insertIndex = self.songsToCompile.curselection()
+            # curselection returns an empty tuple if no selection is made
+            if len(insertIndex) > 0:
+                self.songsToCompile.insert(insertIndex[0], songtitle)
+            else: # insert songs at the end
+                self.songsToCompile.insert(END, songtitle)
+
+        self.updateStatus("{0} songs added".format(len(selectedSongs)))
 
     def removeSong(self):
         """Remove song from compile list"""
