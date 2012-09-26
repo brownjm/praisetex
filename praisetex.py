@@ -64,8 +64,10 @@ def chords(filename):
         songList = [core.Song(f).title for f in filename]
         praisetex = core.PraiseTex()
         praisetex.refreshSongList()
+        index = 0
         for songtitle in songList:
-            praisetex.addSong(songtitle)
+            praisetex.addSong(index, songtitle)
+            index += 1
         error = praisetex.compileChords()
         if error:
             print("pdflatex has failed")
@@ -78,8 +80,10 @@ def slides(filename):
         songList = [core.Song(f).title for f in filename]
         praisetex = core.PraiseTex()
         praisetex.refreshSongList()
+        index = 0
         for songtitle in songList:
-            praisetex.addSong(songtitle)
+            praisetex.addSong(index, songtitle)
+            index += 1
         error = praisetex.compileSlides()
         if error:
             print("pdflatex has failed")
