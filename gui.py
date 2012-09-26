@@ -184,19 +184,70 @@ class PraiseTexGUI(object):
 
     def addSong(self):
         """Add song to compile list"""
+        # TODO: remove all code that manipulates the listbox and praisetex 
+        # list simultaneously. Rewrite using MVC scheme, where after each 
+        # transaction the listbox (view) is updated.
         selectedSongs = self.availableSongs.curselection()
+
+        # get index of where to insert selected songs
+        insertIndex = self.songsToCompile.curselection()
+        if len(insertIndex) > 0:
+            insertIndex = int(insertIndex[0]) # convert to integer
+        else:
+            insertIndex = -1 # song should be appended
+
+
+        if len(selectedSongs) == 0: # do nothing
+            pass
+            
+        elif len(selectedSongs) == 1: # insert the one song
+            song = selectedSongs[0]
+            songtitle = self.availableSongs.get(song)
+            if insertIndex == -1:
+                end = len(self.praisetex.compile)
+                self.praisetex.addSong(end, songtitle)
+                self.songsToCompile.insert(END, songtitle)
+            else:
+                self.praisetex.addSong(insertIndex+1, songtitle)
+                self.songsToCompile.insert(insertIndex+1, songtitle)
+            
+        else: # more than one song  
+            songList = [self.availableSongs.get(song) for song in selectedSongs]
+            if insertIndex != -1:
+                songList.reverse()
+                for songtitle in songList:
+                    self.praisetex.addSong(insertIndex+1, songtitle)
+                    self.songsToCompile.insert(insertIndex+1, songtitle)
+            else: # add songs to the end
+                for songtitle in songList:
+                    end = len(self.praisetex.compile)
+                    self.praisetex.addSong(end, songtitle)
+                    self.songsToCompile.insert(END, songtitle)
+       
+
+        #print "Index: ", insertIndex
+        #print [song.title for song in self.praisetex.compile]
+        self.updateStatus("{0} songs added".format(len(selectedSongs)))
+
+
+
+        """
         for song in selectedSongs:
             songtitle = self.availableSongs.get(song)
-            self.praisetex.addSong(songtitle)
-
-            insertIndex = self.songsToCompile.curselection()
             # curselection returns an empty tuple if no selection is made
+            insertIndex = self.songsToCompile.curselection()
             if len(insertIndex) > 0:
-                self.songsToCompile.insert(insertIndex[0], songtitle)
+                insertIndex = int(insertIndex[0])
+                self.praisetex.addSong(insertIndex+1+offset, songtitle)
+                self.songsToCompile.insert(insertIndex+1+offset, songtitle)
+                offset += 1
             else: # insert songs at the end
-                self.songsToCompile.insert(END, songtitle)
+                insertIndex = END
+                self.praisetex.addSong(-1, songtitle)
+                self.songsToCompile.insert(insertIndex, songtitle)
+         """         
 
-        self.updateStatus("{0} songs added".format(len(selectedSongs)))
+
 
     def removeSong(self):
         """Remove song from compile list"""
