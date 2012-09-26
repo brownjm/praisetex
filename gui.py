@@ -184,6 +184,9 @@ class PraiseTexGUI(object):
 
     def addSong(self):
         """Add song to compile list"""
+        # TODO: remove all code that manipulates the listbox and praisetex 
+        # list simultaneously. Rewrite using MVC scheme, where after each 
+        # transaction the listbox (view) is updated.
         selectedSongs = self.availableSongs.curselection()
 
         # get index of where to insert selected songs
@@ -222,8 +225,8 @@ class PraiseTexGUI(object):
                     self.songsToCompile.insert(END, songtitle)
        
 
-        print "Index: ", insertIndex
-        print [song.title for song in self.praisetex.compile]
+        #print "Index: ", insertIndex
+        #print [song.title for song in self.praisetex.compile]
         self.updateStatus("{0} songs added".format(len(selectedSongs)))
 
 
