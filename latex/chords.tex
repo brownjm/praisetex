@@ -87,6 +87,18 @@
   \vspace{-3mm}
 }
 
+% intro or beginning of a song
+\newcommand{\intro}[1] {
+  \emph{intro:}\\
+  \verse{#1}
+}
+
+% outro or ending of a song
+\newcommand{\outro}[1] {
+  \emph{outro:}\\
+  \verse{#1}
+}
+
 % place a chord above following letter
 \newcommand{\chord}[1] {$\vspace{0.1mm}\stackrel{\makebox[0mm][l]{\hspace{1mm}\footnotesize{\textbf{#1\phantom{/}}}}}{^{^{^{}}}}$}
 
@@ -102,9 +114,12 @@
 \newcommand{\tochorus}{\emph{(chorus)}}
 \newcommand{\toprechorus}{\emph{(prechorus)}}
 \renewcommand{\repeat}{\emph{(repeat)}}
+\newcommand{\echo}{\emph{(echo)}}
+
 
 % disable unused commands
 \newcommand{\framebreak}{}
+\newcommand{\slidesonly}[1]{}
 
 
 \title{GCF Praise Book}

@@ -43,8 +43,12 @@ import sys
 class ChordsWordsPair(object):
     """Represents a line of words and their associated chords"""
     def __init__(self, chordline, wordline):
-        self.chordline = chordline
-        self.wordline = wordline.ljust(len(chordline)) # make same length
+        if(len(chordline) >= len(wordline)):
+            self.chordline = chordline
+            self.wordline = wordline.ljust(len(chordline)) # make same length
+        else:
+            self.chordline = chordline.ljust(len(wordline)) # make same length
+            self.wordline = wordline
 
     def combine(self):
         """Places chords within wordline"""
