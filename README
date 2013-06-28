@@ -1,7 +1,7 @@
 #    praiseTex - a simple set of programs for creating praise music material, 
 #    such as guitar chord sheets and presentation slides
 #
-#    Copyright (C) 2012 Jeffrey M Brown
+#    Copyright (C) 2013 Jeffrey M Brown
 #    brown.jeffreym@gmail.com
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@ praiseTex was designed to run on GNU/Linux, Mac and Windows provided
 you have the required packages:
 
     Latex, including pdflatex and Beamer
-    Python 2.7+ or 3.x+, including Tkinter (most versions have this)
+    Python 2.7+ or 3.2+, including Tkinter (most versions have this)
 
 
 The easiest way to produce chord sheets or presentations is with the
