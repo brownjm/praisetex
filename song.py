@@ -1,9 +1,14 @@
 """New song class to work with a plain text song file format"""
 
 import os
+import re
 
 commandList = ["title", "by", "comment"]
 stanzaList = ["verse", "chorus", "prechorus", "bridge", "intro", "outro"]
+
+chord_regex = re.compile("[A-G]")
+valid_chords = "ABCDEFGminajsugd123456789"
+not_chords = "HJKLOPQRTVWXYZ"
 
 class KeyValuePair(object):
     """Colon separated key-value pair"""
@@ -13,6 +18,19 @@ class KeyValuePair(object):
         self.command = first.strip().lower()
         self.value = second.strip()
 
+class Chord(object):
+    def __init__(self, chord):
+        self.chord = chord.replace('#', '\#')
+    def __str__(self):
+        return "\chord{{{}}}".format(self.chord)
+
+class Chordline(object):
+    def __init__(self, chords):
+        self.chords = chords.replace('#', '\#')
+    def __str__(self):
+        return "\chordline{{{}}}".format(self.chords)
+
+
 class Stanza(object):
     """Represents a block of lyrics and chords"""
     def __init__(self, text):
@@ -21,7 +39,88 @@ class Stanza(object):
         n = command_line.index(":")
         self.command = command_line[:n]
         self.type = self.command.split()[0].lower()
-        self.lines = text[1:]
+        self.raw_lines = text[1:]
+
+        self._parse()
+
+    def _parse(self):
+        self.lines = []
+        num_lines = len(self.raw_lines)
+        n = 0
+        while n < num_lines:
+            line = self.raw_lines[n]
+            chords = is_chord_line(line)
+            
+            # handle special case of dangling last line
+            if n == num_lines-1: # last line
+                if chords:
+                    self.lines.append(Chordline(line))
+                else:
+                    self.lines.append(line)
+                break
+
+            next_line = self.raw_lines[n+1]
+            # multiple lines of chords
+            if chords and is_chord_line(next_line):
+                self.lines.append(Chordline(line))
+                n += 1
+
+            elif chords and not is_chord_line(next_line):
+                self.lines.append(combine(line, next_line))
+                n += 2
+
+            else: # line of lyrics
+                self.lines.append(line)
+                n += 1
+
+    def __str__(self):
+        formatted_lines = []
+        for line in self.lines:
+            print(line, "\n")
+            if type(line) is Chordline or type(line) is str:
+                formatted_lines.append(str(line))
+                continue
+
+            line.append(r"\\")
+            formatted_lines.append(''.join([str(item) for item in line]))
+        formatted_text = '\n'.join(formatted_lines)
+        # drop last latex newline \\ and encapsulate stanza in its
+        # type
+        #return "\\{}{{\n{}\n}}\n".format(self.type, formatted_text[:-2])
+        return "\\{}{{{}}}\n".format(self.type, formatted_text)
+
+
+def combine(chord_line, lyrics):
+    """Combines a line of chords with its associated lyrics"""
+    # make sure the lyrics line is long enough to hold chords
+    if(len(chord_line) > len(lyrics)):
+        lyrics = lyrics.ljust(len(chord_line))
+
+    # find valid chords
+    matches = chord_regex.finditer(chord_line)
+    # list of (location, chord)
+    chords = list(zip([match.start() for match in matches],
+                      chord_line.split()))
+    # insert chords in verse order since insertion shifts positions of subsequent chords
+    combined = []
+    chords.reverse()
+    for chord in chords:
+        loc, ch = chord
+        combined.append(lyrics[loc:])
+        combined.append(Chord(ch))
+        lyrics = lyrics[:loc]
+
+    combined.reverse()
+    return combined
+
+def is_chord_line(line):
+    """Checks if the line contains chords"""
+    if contains_only(line, valid_chords) and not contains_any(line, not_chords):
+        return True
+    else:
+        return False
+
+
         
 
 class Song(object):
@@ -44,7 +143,7 @@ class Song(object):
     
 
     def _parse(self):
-        """Parse song text and convert it into praisetex's latex format"""
+        """Parse song text and find its attributes"""
         # break up raw text into lines
         text = self.raw_text.split('\n')
         self.lines = text
@@ -89,6 +188,25 @@ class Song(object):
             self.attributes["order"] = neworder
             
 
+    def genLatex(self):
+        formatted_text = []
+        
+        # format standard song file header info
+        title = "\\songtitle{{{}}}".format(self.attributes['title'])
+        formatted_text.append(title)
+
+        by = "\\by{{{}}}".format(self.attributes['by'])
+        formatted_text.append(by)
+
+        comment = "\\comment{{{}}}".format(self.attributes['comment'])
+        formatted_text.append(comment)
+
+        # format stanzas
+        for stanza in self.attributes['order']:
+            formatted_text.append(str(self.attributes[stanza]))
+
+        return '\n'.join(formatted_text)
+        
 
 def find_commands(text):
     """Returns a list of line numbers which contain a colon, representing a command"""
@@ -101,7 +219,25 @@ def find_commands(text):
             
     return line_numbers
 
+def contains_any(line, letters):
+    """Check if any of the letters are in the line"""
+    for letter in letters:
+        if letter in line:
+            return True
+    return False
 
+def contains_only(line, letters):
+    """Check if the line only contains these letters"""
+    for c in line:
+        if c.isalnum(): # if character is alphanumeric
+            if c in letters:
+                continue
+            else: # character not found in letters
+                return False
+        else: # ignore non-alphanumeric characters
+            continue
+
+    return True
 
 if __name__ == '__main__':
     s = Song('testsong')
