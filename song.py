@@ -6,7 +6,7 @@ import re
 chord_regex = re.compile("[A-G][1-9#bminajsugd]*[/]*[A-G]*[1-9#bminajsugd]*")
 valid_chords = "ABCDEFGminajsugd123456789"
 not_chords = "HJKLOPQRTVWXYZ"
-paren_regex = re.compile("\((.+)\)")
+
 
 class Chord(object):
     """Represents a single chord within a song file"""
@@ -23,14 +23,6 @@ class Text(object):
     def __init__(self, text):
         self.text = text
 
-class Parentheses(object):
-    """Represents text surrounded in parentheses, which in a song file would tell the read to go to a specified stanza"""
-    def __init__(self, text):
-        match = re.search(paren_regex, text.strip())
-        if match is not None:
-            self.text = match.groups()[0]
-        else:
-            raise ValueError("Parentheses not found")
 
 class KeyValuePair(object):
     """Colon separated key-value pair"""

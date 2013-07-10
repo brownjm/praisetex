@@ -1,10 +1,12 @@
 """Praisetex module that handles latex generation"""
 
+import re
 import song
 
 commandList = ["title", "by", "comment"]
 stanzaList = ["verse", "chorus", "prechorus", "bridge", "intro", "outro"]
 
+paren_regex = re.compile("\((.+)\)")
 
 def latex_command(command, arg):
     """Returns a latex command with a single argument"""
@@ -22,13 +24,16 @@ def chordline_to_latex(chordline):
 
 def text_to_latex(text):
     """Returns latex command for the song.Text class"""
-    text = text.text.replace('   ', latex_command('hspace', '3mm'))
-    text = text.replace('&', '\&') # latex requires backslash
+    # check for parenthesized line, such as "(chorus)"
+    match = re.search(paren_regex, text.text.strip())
+    if match is not None:
+        text = match.groups()[0]
+        return latex_command("emph", "({})".format(text))
+    else:
+        text = text.text.replace('   ', latex_command('hspace', '3mm'))
+        text = text.replace('&', '\&') # latex requires backslash
     return text
 
-def paren_to_latex(paren):
-    """Returns latex command for the song.Parentheses class"""
-    return latex_command("emph", "({})".format(paren.text))
 
 def to_latex(stanza_element):
     """Function that calls appropriate latex conversion function for given stanza element"""
