@@ -9,18 +9,22 @@ not_chords = "HJKLOPQRTVWXYZ"
 paren_regex = re.compile("\((.+)\)")
 
 class Chord(object):
+    """Represents a single chord within a song file"""
     def __init__(self, chord):
         self.text = chord
 
 class Chordline(object):
+    """Represents multiple chords that are on a separate line"""
     def __init__(self, chords):
         self.text = chords
 
 class Text(object):
+    """Represents plain text, such as lyrics, within a song file"""
     def __init__(self, text):
         self.text = text
 
 class Parentheses(object):
+    """Represents text surrounded in parentheses, which in a song file would tell the read to go to a specified stanza"""
     def __init__(self, text):
         match = re.search(paren_regex, text.strip())
         if match is not None:
@@ -160,7 +164,7 @@ class Song(object):
         line_numbers = find_commands(text)
         line_numbers.reverse() # it's easier to search backwards through file for commands
         
-        chords_order = [] # keep order for chords
+        songfile_order = [] # keep order for chords
 
         prev = len(text)
         for num in line_numbers:
@@ -174,7 +178,7 @@ class Song(object):
                 s = Stanza(lines)
                 if not s.command in self.attributes:
                     self.attributes[s.command] = s
-                    chords_order.append(s.command)
+                    songfile_order.append(s.command)
                 else:
                     raise KeyError("Duplicate command in song file: {}".format(s.command))
 
@@ -182,19 +186,21 @@ class Song(object):
                 raise ValueError("Empty line: {}".format(num))
             prev = num
 
-        # handle stanza ordering
-        if not "order" in self.attributes: # use backup ordering of stanzas
-            chords_order.reverse()
-            self.attributes["slides_order"] = chords_order
+        # save stanza ordering for chords sheet
+        self.attributes["chords_order"] = songfile_order
 
-        else: # order specified in file
+        # handle stanza ordering for slides
+        songfile_order.reverse()
+        if "order" in self.attributes: # song order exists
             order = self.attributes["order"]
             order = order.split(',')
             neworder = [word.strip() for word in order]
-            self.attributes["order"] = neworder
+            self.attributes["slides_order"] = neworder
 
-        # keep original ordering
-        self.attributes["original_order"] = chords_order
+        else: # no order in song file, use same order for slides and chords
+            self.attributes["slides_order"] = songfile_order
+
+        
             
 
     def genLatex(self):
