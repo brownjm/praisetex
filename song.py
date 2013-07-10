@@ -3,7 +3,7 @@
 import os
 import re
 
-chord_regex = re.compile("[A-G]")
+chord_regex = re.compile("[A-G][1-9#bminajsugd]*[/]*[A-G]*[1-9#bminajsugd]*")
 valid_chords = "ABCDEFGminajsugd123456789"
 not_chords = "HJKLOPQRTVWXYZ"
 paren_regex = re.compile("\((.+)\)")
