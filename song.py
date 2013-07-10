@@ -124,7 +124,9 @@ def combine(chord_line, lyrics):
         combined.append(Chord(ch))
         lyrics = lyrics[:loc]
 
-    print(len(lyrics))
+    if len(lyrics) > 0: # handle any leftover text before first chord
+        combined.append(Text(lyrics))
+
     combined.reverse()
     return combined
 
