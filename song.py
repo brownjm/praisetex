@@ -54,6 +54,8 @@ class Stanza(object):
         self._parse()
 
     def _parse(self):
+        # lines is a list of the text lines in the song file
+        # each line in lines is also a list of chords and text objects
         self.lines = []
         num_lines = len(self.raw_lines)
         n = 0
@@ -64,23 +66,25 @@ class Stanza(object):
             # handle special case of dangling last line
             if n == num_lines-1: # last line
                 if chords:
-                    self.lines.append(Chordline(line))
+                    # append a list of chordline to match
+                    self.lines.append([Chordline(line)])
                 else:
-                    self.lines.append(Text(line))
+                    self.lines.append([Text(line)])
                 break
 
             next_line = self.raw_lines[n+1]
             # multiple lines of chords
             if chords and is_chord_line(next_line):
-                self.lines.append(Chordline(line))
+                self.lines.append([Chordline(line)])
                 n += 1
 
             elif chords and not is_chord_line(next_line):
+                # combine already returns a list, no need for square braces
                 self.lines.append(combine(line, next_line))
                 n += 2
 
             else: # line of lyrics
-                self.lines.append(Text(line))
+                self.lines.append([Text(line)])
                 n += 1
 
     def __str__(self):
@@ -120,6 +124,7 @@ def combine(chord_line, lyrics):
         combined.append(Chord(ch))
         lyrics = lyrics[:loc]
 
+    print(len(lyrics))
     combined.reverse()
     return combined
 
@@ -256,3 +261,4 @@ def contains_only(line, letters):
 
 if __name__ == '__main__':
     s = Song('testsong')
+    c = s.attributes['chorus']
