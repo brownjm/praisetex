@@ -3,12 +3,30 @@
 import os
 import re
 
-commandList = ["title", "by", "comment"]
-stanzaList = ["verse", "chorus", "prechorus", "bridge", "intro", "outro"]
-
 chord_regex = re.compile("[A-G]")
 valid_chords = "ABCDEFGminajsugd123456789"
 not_chords = "HJKLOPQRTVWXYZ"
+paren_regex = re.compile("\((.+)\)")
+
+class Chord(object):
+    def __init__(self, chord):
+        self.text = chord
+
+class Chordline(object):
+    def __init__(self, chords):
+        self.text = chords
+
+class Text(object):
+    def __init__(self, text):
+        self.text = text
+
+class Parentheses(object):
+    def __init__(self, text):
+        match = re.search(paren_regex, text.strip())
+        if match is not None:
+            self.text = match.groups()[0]
+        else:
+            raise ValueError("Parentheses not found")
 
 class KeyValuePair(object):
     """Colon separated key-value pair"""
@@ -17,18 +35,6 @@ class KeyValuePair(object):
         first, second = line.split(':')
         self.command = first.strip().lower()
         self.value = second.strip()
-
-class Chord(object):
-    def __init__(self, chord):
-        self.chord = chord.replace('#', '\#')
-    def __str__(self):
-        return "\chord{{{}}}".format(self.chord)
-
-class Chordline(object):
-    def __init__(self, chords):
-        self.chords = chords.replace('#', '\#')
-    def __str__(self):
-        return "\chordline{{{}}}".format(self.chords)
 
 
 class Stanza(object):
@@ -56,7 +62,7 @@ class Stanza(object):
                 if chords:
                     self.lines.append(Chordline(line))
                 else:
-                    self.lines.append(line)
+                    self.lines.append(Text(line))
                 break
 
             next_line = self.raw_lines[n+1]
@@ -70,7 +76,7 @@ class Stanza(object):
                 n += 2
 
             else: # line of lyrics
-                self.lines.append(line)
+                self.lines.append(Text(line))
                 n += 1
 
     def __str__(self):
@@ -106,7 +112,7 @@ def combine(chord_line, lyrics):
     chords.reverse()
     for chord in chords:
         loc, ch = chord
-        combined.append(lyrics[loc:])
+        combined.append(Text(lyrics[loc:]))
         combined.append(Chord(ch))
         lyrics = lyrics[:loc]
 
@@ -154,7 +160,7 @@ class Song(object):
         line_numbers = find_commands(text)
         line_numbers.reverse() # it's easier to search backwards through file for commands
         
-        backup_order = [] # in case an order isn't specified in the file
+        chords_order = [] # keep order for chords
 
         prev = len(text)
         for num in line_numbers:
@@ -168,7 +174,7 @@ class Song(object):
                 s = Stanza(lines)
                 if not s.command in self.attributes:
                     self.attributes[s.command] = s
-                    backup_order.append(s.command)
+                    chords_order.append(s.command)
                 else:
                     raise KeyError("Duplicate command in song file: {}".format(s.command))
 
@@ -178,14 +184,17 @@ class Song(object):
 
         # handle stanza ordering
         if not "order" in self.attributes: # use backup ordering of stanzas
-            backup_order.reverse()
-            self.attributes["order"] = backup_order
+            chords_order.reverse()
+            self.attributes["slides_order"] = chords_order
 
         else: # order specified in file
             order = self.attributes["order"]
             order = order.split(',')
             neworder = [word.strip() for word in order]
             self.attributes["order"] = neworder
+
+        # keep original ordering
+        self.attributes["original_order"] = chords_order
             
 
     def genLatex(self):
