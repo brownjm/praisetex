@@ -55,7 +55,11 @@
 }
 
 % create a verse
-\renewcommand{\verse}[1]{#1\\}
+\renewcommand{\verse}[1]{
+\emph{verse:}\\
+  #1\\
+}
+
 
 % create a prechorus
 \newcommand{\prechorus}[1] {
@@ -99,6 +103,25 @@
   \verse{#1}
 }
 
+\newcommand{\tag}[1] {
+  \vspace{-4mm}
+  \begin{quote}
+    \emph{tag:}\\
+    \hspace{1mm}#1
+  \end{quote}
+  \vspace{-2mm}
+}
+
+\newcommand{\songbreak}[1] {
+  \vspace{-4mm}
+  \begin{quote}
+    \emph{break:}\\
+    \hspace{1mm}#1
+  \end{quote}
+  \vspace{-2mm}
+}
+
+
 % place a chord above following letter
 \newcommand{\chord}[1] {$\vspace{0.1mm}\stackrel{\makebox[0mm][l]{\hspace{1mm}\footnotesize{\textbf{#1\phantom{/}}}}}{^{^{^{}}}}$}
 
@@ -106,8 +129,11 @@
 \newcommand{\chordleft}[1] {$\vspace{0.1mm}\stackrel{\makebox[0mm][r]{\hspace{1mm}\footnotesize{\textbf{#1\phantom{/}}}}}{^{^{^{}}}}$}
 
 % create a line consisting of only chords
+% \newcommand{\chordline}[1] {
+%   \small{\textbf{#1}\\}
+% }
 \newcommand{\chordline}[1] {
-  \small{\textbf{#1}\\}
+  \small{\textbf{#1}}
 }
 
 
