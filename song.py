@@ -39,7 +39,7 @@ class Stanza(object):
         #print("Found Stanza: {}\n".format(text))
         command_line = text[0]
         n = command_line.index(":")
-        self.command = command_line[:n]
+        self.command = command_line[:n].lower()
         self.type = self.command.split()[0].lower()
         self.raw_lines = text[1:]
 
@@ -193,7 +193,7 @@ class Song(object):
         if "order" in self.attributes: # song order exists
             order = self.attributes["order"]
             order = order.split(',')
-            neworder = [word.strip() for word in order]
+            neworder = [word.strip().lower() for word in order]
             self.attributes["slides_order"] = neworder
 
         else: # no order in song file, use same order for slides and chords

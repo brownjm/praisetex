@@ -73,7 +73,7 @@ def song_to_latex(song, style="chordsheet"):
     lines.append(latex_command("songtitle", song.attributes["title"]))
     lines.append(latex_command("by", song.attributes["by"]))
     lines.append(latex_command("comment", song.attributes["comment"]))
-
+    print(song.attributes['title'])
     # create latex code for song stanzas
     for stanza_name in song.attributes[order]:
         lines.append(stanza_to_latex(song.attributes[stanza_name]))

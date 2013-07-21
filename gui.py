@@ -79,9 +79,9 @@ class PraiseTexGUI(object):
         filemenu.add_command(label="Open Directory", command=self.openDirectory)
         filemenu.add_command(label="Exit", command=self.root.quit)
         menubar.add_cascade(label="File", menu=filemenu)
-        toolmenu = Menu(menubar, tearoff=0)
-        toolmenu.add_command(label="Convert Chord Sheet", command=self.convert)
-        menubar.add_cascade(label="Tools", menu=toolmenu)
+        # toolmenu = Menu(menubar, tearoff=0)
+        # toolmenu.add_command(label="Convert Chord Sheet", command=self.convert)
+        # menubar.add_cascade(label="Tools", menu=toolmenu)
         self.root.config(menu=menubar)
 
         # left section
@@ -281,11 +281,11 @@ class PraiseTexGUI(object):
         """Update the status bar"""
         self.status.config(text=message)
 
-    def convert(self):
-        filename = filedialog.askopenfilename()
-        if len(filename) > 0:
-            self.praisetex.convert(filename)
-            self.updateStatus("Wrote file: {}".format(filename + ".tex"))
+    # def convert(self):
+    #     filename = filedialog.askopenfilename()
+    #     if len(filename) > 0:
+    #         self.praisetex.convert(filename)
+    #         self.updateStatus("Wrote file: {}".format(filename + ".tex"))
 
 
 if __name__ == '__main__':

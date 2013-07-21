@@ -27,8 +27,9 @@ from collections import deque
 import argparse
 
 import core
+import song
 import gui
-import chord_sheet_converter as csc
+#import chord_sheet_converter as csc
 
 # get praisetex folders's absolute path
 praisetex_dir = os.path.dirname(os.path.abspath(__file__))
@@ -37,31 +38,31 @@ def runGUI():
     app = gui.PraiseTexGUI(os.path.join(praisetex_dir, "songs"))
     app.run()
 
-def convert(filename):
-    for filename in args.filename:
-        print("Converting chord sheet: {}".format(filename))
-        converter = csc.ChordConverter()
-        try:
-            converter.convert(filename)
-        except IOError as ioe:
-            print(ioe)
-            sys.exit()
+# def convert(filename):
+#     for filename in args.filename:
+#         print("Converting chord sheet: {}".format(filename))
+#         converter = csc.ChordConverter()
+#         try:
+#             converter.convert(filename)
+#         except IOError as ioe:
+#             print(ioe)
+#             sys.exit()
 
-def transpose(filenames, numHalfSteps):
-    if numHalfSteps != 0:
-        for filename in filenames:
-            print("Transposing {} by {} half steps".format(filename, numHalfSteps))
-            s = core.Song(filename)
-            s.transpose(numHalfSteps)
-            newfilename = '{0}{1:+2d}'.format(filename, numHalfSteps)
-            s.write(newfilename)
-            print("Wrote new file: {}".format(newfilename))
+# def transpose(filenames, numHalfSteps):
+#     if numHalfSteps != 0:
+#         for filename in filenames:
+#             print("Transposing {} by {} half steps".format(filename, numHalfSteps))
+#             s = core.Song(filename)
+#             s.transpose(numHalfSteps)
+#             newfilename = '{0}{1:+2d}'.format(filename, numHalfSteps)
+#             s.write(newfilename)
+#             print("Wrote new file: {}".format(newfilename))
 
 
 def chords(filename):
     if len(filename) > 0:
         print("Creating chords from: {}".format(args.filename))
-        songList = [core.Song(f).title for f in filename]
+        songList = [song.Song(f).attributes["title"] for f in filename]
         praisetex = core.PraiseTex()
         praisetex.refreshSongList()
         index = 0
@@ -77,7 +78,7 @@ def chords(filename):
 def slides(filename):
     if len(filename) > 0:
         print("Creating slides from: {}".format(args.filename))
-        songList = [core.Song(f).title for f in filename]
+        songList = [song.Song(f).attributes["title"] for f in filename]
         praisetex = core.PraiseTex()
         praisetex.refreshSongList()
         index = 0
@@ -91,7 +92,7 @@ def slides(filename):
             print("Compiled slides.pdf")
 
 def getParser():
-    parser = argparse.ArgumentParser(description='PraiseTex: program for creating guitar chord sheets and presentation slides.')
+    parser = argparse.ArgumentParser(description='praiseTex: program for creating guitar chordsheets and presentation slides.')
 
     # options compiling multiple song files
     parser.add_argument(action='store', dest='filename', nargs='*')
@@ -101,10 +102,10 @@ def getParser():
                         help='create presentation slides from provided song files')
 
     # options for altering song files
-    parser.add_argument('--convert', action='store_true', default=False, 
-                        help='convert guitar chord sheet into praiseTex song file')
-    parser.add_argument('--transpose', action='store', type=int, metavar='N',
-                        help='transpose song file by number of half steps')
+    # parser.add_argument('--convert', action='store_true', default=False, 
+    #                     help='convert guitar chord sheet into praiseTex song file')
+    # parser.add_argument('--transpose', action='store', type=int, metavar='N',
+    #                     help='transpose song file by number of half steps')
     return parser
 
 
@@ -114,13 +115,15 @@ if __name__ == '__main__':
     parser = getParser()
     args = parser.parse_args()
 
-    if args.convert: # converting chord sheet to praisetex song file
-        convert(args.filename)
 
-    elif args.transpose is not None: # transposing song
-        transpose(args.filename, args.transpose)
+    # if args.convert: # converting chord sheet to praisetex song file
+    #     convert(args.filename)
+
+    # elif args.transpose is not None: # transposing song
+    #     transpose(args.filename, args.transpose)
         
-    elif args.chords or args.slides: # creating chords or slides
+    # elif args.chords or args.slides: # creating chords or slides
+    if args.chords or args.slides: # creating chords or slides
         if args.chords:
             chords(args.filename)
 
