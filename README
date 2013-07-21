@@ -1,5 +1,5 @@
 #    praiseTex - a simple set of programs for creating praise music material, 
-#    such as guitar chord sheets and presentation slides
+#    such as guitar chordsheets and presentation slides
 #
 #    Copyright (C) 2013 Jeffrey M Brown
 #    brown.jeffreym@gmail.com
@@ -25,57 +25,27 @@ you have the required packages:
     Python 2.7+ or 3.2+, including Tkinter (most versions have this)
 
 
-The easiest way to produce chord sheets or presentations is with the
+The easiest way to produce chordsheets or slides is with the
 GUI:
 
     python praisetex.py
 
 
 All of the features in the GUI are also available via command line. If
-you'd prefer a command line version
+you'd prefer a command line version use
 
     python praisetex.py -h
 
 
-will print out a helpful list of all the options. 
+to print out a helpful list of all the options. 
 
 
-All song files must adhere to the format shown in exampleSong.tex,
-which is located in folder 'latex'. Praisetex can take a typical
-guitar chord sheet found online, where chords are placed above words
-using spaces, and partially convert it into a proper song file. You
-can access this tool within the praisetex GUI or run one of the
-following:
-
-    python praisetex.py --convert [filename]
+All song files must adhere to the format shown in
+ExampleSong.txt. Song files are written in plain ascii text using any
+simple text editor (not MS word or OpenOffice, just plain
+text). Please put your songs into the folder 'songs'.
 
 
-The output will be named: [filename].tex. The user will have to edit
-the file further, in order for it to be usable by praiseTex. This
-script only took care of the tedious part of placing chords in the
-correct position within lyrics. The user will still section the text
-into \verse{}, \prechorus{} and \chorus{} structures, fill in the
-title and author, and add any goto hints such as \tochorus or
-\toprechorus.
-
-
-Once song files are in the proper format, they can be transposed into
-a different key using
-
-    python praisetex.py --transpose N [filename]
-
-
-where N is the number of half steps.
-
-
-Important: Do not edit the files chords.tex and slides.tex. They are
-used as templates for producing the repective files. Folder structure
-is important, therefore please place song files within the 'songs'
-subfolder.
-
-
-If you're on a Unix based computer and don't want to use Python, then
-the following bash scripts to produce chords and slides are available.
-
-    ./chords song1.tex song2.tex ...
-    ./slides song1.tex song2.tex ...
+Important: Do not edit the files inside the folder 'latex' unless you
+know what you are doing. They are used as templates for producing
+chordsheets and slides.
