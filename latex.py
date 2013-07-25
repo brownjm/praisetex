@@ -15,7 +15,7 @@ def latex_command(command, arg):
 def chord_to_latex(chord):
     """Returns latex command for the song.Chord class"""
     chord = chord.text.replace('#', '\#') # latex requires backslash
-    chord = chord.replace('b', '\\flat') # change to latex's flat symbol
+    chord = chord.replace('b', '$\\flat$') # change to latex's flat symbol
     return latex_command("chord", chord)
 
 def chordline_to_latex(chordline):
