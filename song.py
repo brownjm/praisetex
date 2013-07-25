@@ -4,7 +4,7 @@ import os
 import re
 
 chord_regex = re.compile("[A-G][1-9#bminajsugd]*[/]*[A-G]*[1-9#bminajsugd]*")
-valid_chords = "ABCDEFGminajsugd123456789"
+valid_chords = "ABCDEFGb#minajsugd123456789"
 not_chords = "HJKLOPQRTVWXYZ"
 
 
@@ -254,5 +254,5 @@ def contains_only(line, letters):
     return True
 
 if __name__ == '__main__':
-    s = Song('testsong')
-    c = s.attributes['chorus']
+    s = Song('songs/10000Reasons.txt')
+    c = s.attributes['chorus 1']
