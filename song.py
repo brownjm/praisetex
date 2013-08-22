@@ -5,7 +5,7 @@ import re
 
 chord_regex = re.compile("[A-G][1-9#bminajsugd]*[/]*[A-G]*[1-9#bminajsugd]*")
 valid_chords = "ABCDEFGb#minajsugd123456789"
-not_chords = "HJKLOPQRTVWXYZ"
+not_chords = "HJKLOPQRTVWXYZ\n"
 
 
 class Chord(object):
