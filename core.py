@@ -213,7 +213,8 @@ class PraiseTex(object):
             f.writelines(ctmp)
 
         # compile document
-        error = subprocess.call(["pdflatex", "-halt-on-error", "ctmp.tex"])
+        error = subprocess.call(["pdflatex", "-halt-on-error", "\\pdfminorversion=4", "\\input{ctmp.tex}"])
+
         if not error:
             os.rename("ctmp.pdf", "chords.pdf")
 
@@ -248,6 +249,7 @@ class PraiseTex(object):
 
         # compile document
         error = subprocess.call(["pdflatex", "-halt-on-error",  "\\pdfminorversion=4", "\\input{stmp.tex}"])
+        #error = subprocess.call(["pdflatex", "-halt-on-error", "\\input{stmp.tex}"])
         if not error:
             os.rename("stmp.pdf", "slides.pdf")
 
