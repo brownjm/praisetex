@@ -22,6 +22,18 @@ def apply_pass(lst, function, parent=None):
         else: # another list
             apply_pass(element, function, parent=lst)
 
+# removes empty lists
+def remove_empty_list(lst):
+    """Remove empty list from song"""
+    for index, element in enumerate(lst):
+        if isinstance(element, list):
+            if len(element) == 0:
+                lst.pop(index)
+            else:
+                remove_empty_list(element)
+        else:
+            pass
+
 
 # # applies a single pass of the nano pass compilation process
 # def apply_pass(lst, function, parent=None):
@@ -70,6 +82,14 @@ def cleanup_by_command(index, element, parent):
 def cleanup_comment_command(index, element, parent):
     if isinstance(element, Command) and element.text == 'comment' and len(parent) == 2:
         parent[1] = parent[1].strip()
+
+def cleanup_capo_command(index, element, parent):
+    if isinstance(element, Command) and element.text == 'capo' and len(parent) == 2:
+        # make sure capo argument is classified as Text and not Chordline, etc
+        if isinstance(parent[1], str):
+            parent[1] = s.Text(parent[1].strip())
+        else:
+            parent[1] = s.Text(parent[1].text.strip())
         
 def merge_chords_lyrics(index, element, parent):
     if not isinstance(element, s.Chordline):
@@ -94,6 +114,13 @@ class Command(object):
     """Represents a command within a song file"""
     def __init__(self, text):
         self.text = text.strip()
+        textlist = self.text.split()
+        self.command = textlist[0]
+        
+        if len(textlist) == 1:
+            self.command_arg = None
+        else:
+            self.command_arg = textlist[1]
 
 def identify_commands(index, element, parent):
     if isinstance(element, str) and index == 0:
@@ -153,12 +180,12 @@ def chordline_to_latex(index, element, parent):
         parent[index] = latex_command("chordline", element.text)
 
 
-paren_regex = re.compile("\((.+)\)")
+parenthesis_regex = re.compile("\((.+)\)")
 
-def paren_to_latex(index, element, parent):
+def parenthesis_to_latex(index, element, parent):
     """Handle emphasized text surrounded by parentheses"""
     if isinstance(element, s.Text):
-        match = re.search(paren_regex, element.text)
+        match = re.search(parenthesis_regex, element.text)
         if match is not None:
             text = match.groups()[0]
             parent[index] = latex_command("emph", "({})".format(text))
@@ -173,27 +200,52 @@ def ampersand_to_latex(index, element, parent):
     if isinstance(element, s.Text):
         parent[index] = element.text.replace('&', '\&')
 
-
-commandList = ["title", "by", "comment", "verse", "chorus", "prechorus", "bridge", "intro", "outro"]
+# maps song file commands to their equivalent latex command
+command_map = {"title": "title", 
+               "by": "by", 
+               "comment": "comment", 
+               "capo": "capo", 
+               "scripture": "scripture", 
+               "verse": "verse", 
+               "chorus": "chorus", 
+               "prechorus": "prechorus", 
+               "bridge": "bridge", 
+               "intro": "intro", 
+               "outro": "outro"}
 
 def command_to_latex(index, element, parent):
     """Produce latex code for the commands and their arguments"""
     if isinstance(element, Command):
-        command = element.text
+        command = element.command
+        if element.command_arg != None:
+            command = command + "{" + element.command_arg + "}"
         args = parent[1:]
         for i in range(len(args)):
             parent.pop(-1)
-        parent[index] = latex_command(command, ''.join(args))
+        parent[index] = latex_command(command, '\n'.join(args))
 
 def remove_chords(index, element, parent):
     """Remove chords from song"""
     if isinstance(element, s.Chordline) or isinstance(element, s.Chord):
         parent.pop(index)
 
-if __name__ == '__main__':
-    with open('test', 'r') as f:
-        lines = f.read().split('\n')
+def chords_ordering(index, element, parent):
+    """Removes the order command and leaves song structures in original order"""
+    if isinstance(element, Command) and element.text == 'order':
+        for i in range(len(parent)):
+            parent.pop(-1)
 
+def elements_to_string(songlist):
+    """Combine all elements into a string separated by newlines"""
+    songlist = [element[0] for element in songlist]
+    return '\n'.join(songlist)
+        
+
+
+def compile_chords(filename):
+    """Converts a song file into latex code for a chordsheet"""
+    with open(filename, 'r') as f:
+        lines = f.read().split('\n')
     song = parse_structure(lines)
 
     # clean up and find commands
@@ -207,22 +259,49 @@ if __name__ == '__main__':
     apply_pass(song, cleanup_title_command)
     apply_pass(song, cleanup_order_command)
     apply_pass(song, cleanup_comment_command)
+    apply_pass(song, cleanup_capo_command)
 
     # process chords and lyrics
     apply_pass(song, identify_chordlines)
     apply_pass(song, identify_text)
-    #apply_pass(song, remove_chords)
+    apply_pass(song, remove_chords)
     apply_pass(song, merge_chords_lyrics)
-    # identify newlines produced by merge_chords_lyrics
     apply_pass(song, identify_text)
-    #apply_pass(song, print_item)
+    
 
-    # # latex generation
+    # handle order
+    apply_pass(song, chords_ordering)
+
+    # latex generation
     apply_pass(song, chord_to_latex)
     apply_pass(song, chordline_to_latex)
-    apply_pass(song, paren_to_latex)
+    apply_pass(song, parenthesis_to_latex)
     apply_pass(song, spacing_to_latex)
     apply_pass(song, ampersand_to_latex)
     apply_pass(song, command_to_latex)
+
+    # final clean up of empty lists
+    remove_empty_list(song)
+
+    # combine all elements into a single string
+    song = elements_to_string(song)
+    
+    return song
+
+
+def compile_slides(filename):
+    """Converts a song file into latex code for presentation slides"""
+    with open(filename, 'r') as f:
+        lines = f.read().split('\n')
+    song = parse_structure(lines)
+
+
+    return song
+
+if __name__ == '__main__':
+    song = compile_chords('songs/Cannons.txt')
+    
+
+    
 
     
