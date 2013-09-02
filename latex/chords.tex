@@ -35,58 +35,106 @@
 \parindent = 0mm
 \widowpenalty = 10000
 \clubpenalty = 10000
-\renewcommand{\thesection}{\Alph{section}}
-\setcounter{section}{19}
+%\renewcommand{\thesection}{\Alph{section}}
+%\setcounter{section}{19}
 
 % set song title
-\newcommand{\songtitle}[1]{\subsection{#1}}
+%\newcommand{\songtitle}[1]{\subsection{#1}}
+%\newcommand{\songtitle}[1]{\section{#1}}
+\newcommand{\songtitle}[1]{\textbf{\huge #1}\\}
 
 % assign the author
+%% \newcommand{\by}[1] {
+%%   \vspace{-2mm}
+%%   \hspace{11mm}\emph{#1}\\
+%%   \vspace{-3mm}
+%% }
 \newcommand{\by}[1] {
-  \vspace{-2mm}
-  \hspace{11mm}\emph{#1}\\
-  \vspace{-3mm}
+  %\emph{#1}\\
+  \textbf{#1}\\
 }
 
 % comments for musicians
 \newcommand{\comment}[1] {
-  \hspace{7mm}\textbf{#1}\\
-  \vspace{2mm}
+  \emph{\small #1}\\
+}
+
+% scripture
+\newcommand{\scripture}[1] {
+  \emph{\small #1}\\
+}
+
+\newcommand{\capo}[1] {
+  \emph{\small Capo: #1}\\
+}
+
+% song ordering
+\newcommand{\order}[1]{
+  \emph{\small Order: #1}\\
 }
 
 % create a verse
-\renewcommand{\verse}[1]{
-\emph{verse:}\\
-  #1\\
+%% \renewcommand{\verse}[1]{
+%% \emph{verse:}\\
+%%   #1\\
+%% }
+\renewcommand{\verse}[2][]{
+\emph{verse#1:}\\
+  #2\\
 }
 
 
 % create a prechorus
-\newcommand{\prechorus}[1] {
+%% \newcommand{\prechorus}[1] {
+%%   \vspace{-4mm}
+%%   \begin{quote}
+%%     \emph{prechorus:}\\
+%%     \hspace{1mm}#1
+%%   \end{quote}
+%%   \vspace{-2mm}
+%% }
+\newcommand{\prechorus}[2][] {
   \vspace{-4mm}
   \begin{quote}
-    \emph{prechorus:}\\
-    \hspace{1mm}#1
+    \emph{prechorus#1:}\\
+    \hspace{1mm}#2
   \end{quote}
   \vspace{-2mm}
 }
 
+
 % create a chorus
-\newcommand{\chorus}[1] {
+%% \newcommand{\chorus}[1] {
+%%   \vspace{-4mm}
+%%   \begin{quote}
+%%     \emph{chorus:}\\
+%%     \hspace{1mm}#1\\
+%%   \end{quote}
+%%   \vspace{-2mm}
+%% }
+\newcommand{\chorus}[2][] {
   \vspace{-4mm}
   \begin{quote}
-    \emph{chorus:}\\
-    \hspace{1mm}#1\\
+    \emph{chorus#1:}\\
+    \hspace{1mm}#2\\
   \end{quote}
   \vspace{-2mm}
 }
 
 % create a bridge
-\newcommand{\bridge}[1] {
+%% \newcommand{\bridge}[1] {
+%%   \vspace{-3mm}
+%%   \begin{quote}
+%%     \emph{bridge:}\\
+%%     \hspace{1mm}#1\\
+%%   \end{quote}
+%%   \vspace{-3mm}
+%% }
+\newcommand{\bridge}[2][] {
   \vspace{-3mm}
   \begin{quote}
-    \emph{bridge:}\\
-    \hspace{1mm}#1\\
+    \emph{bridge#1:}\\
+    \hspace{1mm}#2\\
   \end{quote}
   \vspace{-3mm}
 }
@@ -103,20 +151,20 @@
   #1\\
 }
 
-\newcommand{\tag}[1] {
+\newcommand{\tag}[2][] {
   \vspace{-4mm}
   \begin{quote}
-    \emph{tag:}\\
-    \hspace{1mm}#1
+    \emph{tag#1:}\\
+    \hspace{1mm}#2
   \end{quote}
   \vspace{-2mm}
 }
 
-\newcommand{\songbreak}[1] {
+\newcommand{\songbreak}[2][] {
   \vspace{-4mm}
   \begin{quote}
-    \emph{break:}\\
-    \hspace{1mm}#1
+    \emph{break#1:}\\
+    \hspace{1mm}#2
   \end{quote}
   \vspace{-2mm}
 }
@@ -133,7 +181,7 @@
 %   \small{\textbf{#1}\\}
 % }
 \newcommand{\chordline}[1] {
-  \small{\textbf{#1}}
+  \small{\textbf{#1}}\\
 }
 
 
@@ -156,7 +204,7 @@
 \date{\today}
 
 \begin{document}
-\begin{multicols}{2}
+\begin{multicols}{1}
   % input songs here
   \input{songs/YourLoveIsExtravagant.tex}
 \end{multicols}
