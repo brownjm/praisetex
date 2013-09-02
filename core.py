@@ -27,6 +27,7 @@ import subprocess
 #import chord_sheet_converter as csc
 import song
 import latex
+import parser
 
 # regex pattern for any latex command with the form: \command{arg}
 latexCommandPattern = r'\\(\w+)\{([^{]*)\}'
@@ -155,18 +156,28 @@ class PraiseTex(object):
     """Class for producing chords and slides from song files"""
     def __init__(self, songdir="songs"):
         self.songdir = songdir
-        self.songs = {}
+        #self.songs = {}
+        self.songs = []
         self.compile = []
 
+    # def refreshSongList(self):
+    #     """Reload available songs found in songs directory"""
+    #     self.songs.clear()
+    #     filenames = os.listdir(self.songdir)
+    #     # keep only song filenames ending with tex or underscore
+    #     filenames = [song for song in filenames if song.endswith('.txt') or song.endswith('___')]
+    #     songs = [song.Song(os.path.join(self.songdir, fn)) for fn in filenames]
+    #     self.songs = dict([(song.attributes["title"], song) for song in songs])
+    #     songlist = list(self.songs.keys())
+    #     songlist.sort() # alphabetize
+    #     return songlist
+
     def refreshSongList(self):
-        """Reload available songs found in songs directory"""
-        self.songs.clear()
+        """Reload the song found in 'songs' directory"""
+        del self.songs[:] # delete contents of song list
         filenames = os.listdir(self.songdir)
-        # keep only song filenames ending with tex or underscore
-        filenames = [song for song in filenames if song.endswith('.txt') or song.endswith('___')]
-        songs = [song.Song(os.path.join(self.songdir, fn)) for fn in filenames]
-        self.songs = dict([(song.attributes["title"], song) for song in songs])
-        songlist = list(self.songs.keys())
+        # keep only song filenames ending with 'txt'
+        songlist = [fn for fn in filenames if fn.endswith('.txt') or fn.endswith('___')]
         songlist.sort() # alphabetize
         return songlist
 
@@ -182,9 +193,9 @@ class PraiseTex(object):
     def addSong(self, index, songtitle):
         """Add song to compile list"""
         index = int(index)
-        song = self.songs[songtitle]
+        #song = self.songs[songtitle]
         #self.compile.append(song)
-        self.compile.insert(index, song)
+        self.compile.insert(index, songtitle)
 
     def removeSong(self, index):
         """Remove song from compile list"""
@@ -199,7 +210,7 @@ class PraiseTex(object):
             lines = f.readlines()
 
         # find line number ranges where \input{song.tex} should be
-        begin = lines.index("\\begin{multicols}{2}\n") + 1
+        begin = lines.index("\\begin{multicols}{1}\n") + 1
         end = lines.index("\\end{multicols}\n")
         top = lines[:begin]
         bottom = lines[end:]
@@ -208,7 +219,9 @@ class PraiseTex(object):
         ctmp = []
         ctmp.extend(top)
         for song in self.compile:
-            ctmp.append(latex.song_to_latex(song, style="chordsheet"))
+            #ctmp.append(latex.song_to_latex(song, style="chordsheet"))
+            fullpathfilename = os.path.join(self.songdir, song)
+            ctmp.append(parser.compile_chords(fullpathfilename))
         ctmp.extend(bottom)
         with open("ctmp.tex", "w") as f:
             f.writelines(ctmp)

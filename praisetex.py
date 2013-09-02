@@ -62,7 +62,7 @@ def runGUI():
 def chords(filename):
     if len(filename) > 0:
         print("Creating chords from: {}".format(args.filename))
-        songList = [song.Song(f).attributes["title"] for f in filename]
+        songList = [f for f in filename]
         praisetex = core.PraiseTex()
         praisetex.refreshSongList()
         index = 0

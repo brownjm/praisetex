@@ -109,18 +109,21 @@ def merge_chords_lyrics(index, element, parent):
         combined.reverse()
         for item in combined:
             parent.insert(index, item)
+
+
             
 class Command(object):
     """Represents a command within a song file"""
     def __init__(self, text):
         self.text = text.strip()
         textlist = self.text.split()
-        self.command = textlist[0]
+        self.command = textlist[0].lower()
         
         if len(textlist) == 1:
             self.command_arg = None
         else:
             self.command_arg = textlist[1]
+
 
 def identify_commands(index, element, parent):
     if isinstance(element, str) and index == 0:
@@ -162,6 +165,14 @@ def print_item(index, element, parent):
     else:
         print(element.text)
 
+# handle chords order command
+def handle_chords_order(index, element, parent):
+    if isinstance(element, Command) and element.text == 'order':
+        args = []
+        for i in range(len(parent[1:])):
+            args.append(parent.pop(1).text)
+        parent.append(', '.join(args))
+
 # latex generation
 def latex_command(command, arg):
     """Returns a latex command with a single argument"""
@@ -177,7 +188,9 @@ def chord_to_latex(index, element, parent):
 def chordline_to_latex(index, element, parent):
     """Returns latex command for the song.Chordline class"""
     if isinstance(element, s.Chordline):
-        parent[index] = latex_command("chordline", element.text)
+        chords = element.text.replace('#', '\#') # latex requires backslash
+        chords = chords.replace('b', '$\\flat$') # change to latex's flat symbol
+        parent[index] = latex_command("chordline", chords)
 
 
 parenthesis_regex = re.compile("\((.+)\)")
@@ -201,42 +214,63 @@ def ampersand_to_latex(index, element, parent):
         parent[index] = element.text.replace('&', '\&')
 
 # maps song file commands to their equivalent latex command
-command_map = {"title": "title", 
+command_map = {"title": "songtitle", 
                "by": "by", 
                "comment": "comment", 
                "capo": "capo", 
                "scripture": "scripture", 
+               "order": "order",
                "verse": "verse", 
                "chorus": "chorus", 
                "prechorus": "prechorus", 
                "bridge": "bridge", 
                "intro": "intro", 
-               "outro": "outro"}
+               "outro": "outro",
+               "tag": "tag",
+               "break": "songbreak"}
+
+def check_command_validity(index, element, parent):
+    """Check that commands are valid song file ones"""
+    if isinstance(element, Command):
+        if not element.command in command_map.keys():
+            raise RuntimeError("Command not valid: {}".format(element.command))
 
 def command_to_latex(index, element, parent):
     """Produce latex code for the commands and their arguments"""
     if isinstance(element, Command):
-        command = element.command
+        command = command_map[element.command]
         if element.command_arg != None:
-            command = command + "{" + element.command_arg + "}"
+            command = command + "[~" + element.command_arg + "]"
+
+        print(command)
+
         args = parent[1:]
         for i in range(len(args)):
             parent.pop(-1)
-        parent[index] = latex_command(command, '\n'.join(args))
+        parent[index] = latex_command(command, ''.join(args))
 
 def remove_chords(index, element, parent):
     """Remove chords from song"""
     if isinstance(element, s.Chordline) or isinstance(element, s.Chord):
         parent.pop(index)
 
-def chords_ordering(index, element, parent):
-    """Removes the order command and leaves song structures in original order"""
+def remove_capo(index, element, parent):
+    """Remove capo command from song"""
+    if isinstance(element, Command) and element.text == 'capo':
+        #parent.clear() # python 3 only
+        del parent[:]
+
+def remove_order(index, element, parent):
+    """Removes the order command"""
     if isinstance(element, Command) and element.text == 'order':
-        for i in range(len(parent)):
-            parent.pop(-1)
+        #for i in range(len(parent)):
+        #    parent.pop(-1)
+        del parent[:] # clear contents of parent list
+        #parent.clear() # python 3 only
 
 def elements_to_string(songlist):
     """Combine all elements into a string separated by newlines"""
+    songlist.append('\n\n\\')
     songlist = [element[0] for element in songlist]
     return '\n'.join(songlist)
         
@@ -252,6 +286,7 @@ def compile_chords(filename):
     apply_pass(song, split_by_colon)
     apply_pass(song, remove_empty_lines)
     apply_pass(song, identify_commands)
+    apply_pass(song, check_command_validity)
 
     # clean up command arguments
     apply_pass(song, cleanup_title_command)
@@ -264,13 +299,13 @@ def compile_chords(filename):
     # process chords and lyrics
     apply_pass(song, identify_chordlines)
     apply_pass(song, identify_text)
-    apply_pass(song, remove_chords)
     apply_pass(song, merge_chords_lyrics)
     apply_pass(song, identify_text)
     
 
     # handle order
-    apply_pass(song, chords_ordering)
+    apply_pass(song, handle_chords_order)
+    remove_empty_list(song)
 
     # latex generation
     apply_pass(song, chord_to_latex)
@@ -283,7 +318,7 @@ def compile_chords(filename):
     # final clean up of empty lists
     remove_empty_list(song)
 
-    # combine all elements into a single string
+    # # combine all elements into a single string
     song = elements_to_string(song)
     
     return song
@@ -295,11 +330,50 @@ def compile_slides(filename):
         lines = f.read().split('\n')
     song = parse_structure(lines)
 
+    # clean up and find commands
+    apply_pass(song, split_by_colon)
+    apply_pass(song, remove_empty_lines)
+    apply_pass(song, identify_commands)
+    apply_pass(song, check_command_validity)
+
+    # clean up command arguments
+    apply_pass(song, cleanup_title_command)
+    apply_pass(song, cleanup_by_command)
+    apply_pass(song, cleanup_title_command)
+    apply_pass(song, cleanup_order_command)
+    apply_pass(song, cleanup_comment_command)
+    apply_pass(song, cleanup_capo_command)
+
+    # process chords and lyrics
+    apply_pass(song, identify_chordlines)
+    apply_pass(song, remove_chords)
+    apply_pass(song, remove_capo)
+    apply_pass(song, remove_order)
+    apply_pass(song, identify_text)
+    
+
+    # # handle order
+    apply_pass(song, chords_ordering)
+
+    # # latex generation
+    apply_pass(song, chord_to_latex)
+    apply_pass(song, chordline_to_latex)
+    # apply_pass(song, parenthesis_to_latex)
+    # apply_pass(song, spacing_to_latex)
+    # apply_pass(song, ampersand_to_latex)
+    # apply_pass(song, command_to_latex)
+
+    # # final clean up of empty lists
+    # remove_empty_list(song)
+
+    # # combine all elements into a single string
+    # song = elements_to_string(song)
 
     return song
 
 if __name__ == '__main__':
     song = compile_chords('songs/Cannons.txt')
+    #song = compile_slides('songs/Cannons.txt')
     
 
     
