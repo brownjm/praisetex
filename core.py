@@ -1,5 +1,5 @@
 #!/usr/bin/python
-#    praiseTex - simple set of programs for creating praise music material, 
+#    praiseTex - simple set of programs for creating praise music material,
 #    such as guitar chord sheets and presentation slides
 #
 #    Copyright (C) 2013 Jeffrey M Brown
@@ -46,11 +46,11 @@ class ChordMap(object):
     def __init__(self, nHalfSteps, preferSharps=True):
         self.halfsteps = int(nHalfSteps)
         if preferSharps:
-            self.chords = ['A', 'A\\#', 'B', 'C', 'C\\#', 'D', 'D\\#', 'E', 
+            self.chords = ['A', 'A\\#', 'B', 'C', 'C\\#', 'D', 'D\\#', 'E',
                            'F', 'F\\#', 'G', 'G\\#']
         else:
-            self.chords = ['A', 'B$\\flat$', 'B', 'C', 'D$\\flat$', 'D', 
-                           'E$\\flat$', 'E', 'F', 'G$\\flat$', 'G', 
+            self.chords = ['A', 'B$\\flat$', 'B', 'C', 'D$\\flat$', 'D',
+                           'E$\\flat$', 'E', 'F', 'G$\\flat$', 'G',
                            'A$\\flat$']
 
         # map the original chords to the new transposed ones
@@ -103,13 +103,13 @@ class ChordMap(object):
 #         cm = ChordMap(numHalfSteps)
 #         stringList = []
 #         text = self.text
-        
+
 #         match = re.search(chordCommand, text)
 #         while match is not None:
 #             before = text[:match.start()] # up to chord
-#             chord = text[match.start():match.end()] # chord       
+#             chord = text[match.start():match.end()] # chord
 #             stringList.append(before)
- 
+
 #             # find which command matched and grab actual chord
 #             ch, left, line = match.groups()
 #             if ch is not None:
@@ -123,12 +123,12 @@ class ChordMap(object):
 #                 letter = line
 #             else:
 #                 raise 'No chord match found'
-            
+
 #             newletter = cm.transpose(letter) # transposition
 #             stringList.append(command.format(newletter)) # add new chord
 #             text = text[match.end():] # focus on remaining string
 #             match = re.search(chordCommand, text) # search rest of text
-            
+
 #         stringList.append(text) # add final string
 #         self.text = ''.join(stringList)
 
@@ -256,7 +256,9 @@ class PraiseTex(object):
         stmp = []
         stmp.extend(top)
         for song in self.compile:
-            stmp.append(latex.song_to_latex(song, style="slides"))
+            #stmp.append(latex.song_to_latex(song, style="slides"))
+            fullpathfilename = os.path.join(self.songdir, song)
+            stmp.append(parser.compile_chords(fullpathfilename))
         stmp.extend(bottom)
         with open("stmp.tex", "w") as f:
             f.writelines(stmp)
@@ -272,7 +274,7 @@ class PraiseTex(object):
         for f in fnames:
             if "stmp" in f:
                 os.remove(f)
-                
+
         return error
 
     # def convert(self, filename):
