@@ -9,4 +9,6 @@ TODO/*
 *.pyc
 
 !.gitignore
-
+TODO
+convert
+oldformat
