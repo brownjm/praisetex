@@ -226,7 +226,7 @@ command_map = {"title": "songtitle",
                "bridge": "bridge", 
                "intro": "intro", 
                "outro": "outro",
-               "tag": "tag",
+               "tag": "tagline",
                "break": "songbreak"}
 
 def check_command_validity(index, element, parent):
@@ -353,7 +353,7 @@ def compile_slides(filename):
     
 
     # # handle order
-    apply_pass(song, chords_ordering)
+    #apply_pass(song, chords_ordering)
 
     # # latex generation
     apply_pass(song, chord_to_latex)
@@ -372,8 +372,8 @@ def compile_slides(filename):
     return song
 
 if __name__ == '__main__':
-    song = compile_chords('songs/Cannons.txt')
-    #song = compile_slides('songs/Cannons.txt')
+    #song = compile_chords('songs/Cannons.txt')
+    song = compile_slides('songs/Cannons.txt')
     
 
     
