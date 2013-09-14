@@ -90,7 +90,7 @@ def cleanup_capo_command(index, element, parent):
             parent[1] = s.Text(parent[1].strip())
         else:
             parent[1] = s.Text(parent[1].text.strip())
-        
+
 def merge_chords_lyrics(index, element, parent):
     if not isinstance(element, s.Chordline):
         return
@@ -105,20 +105,20 @@ def merge_chords_lyrics(index, element, parent):
         chords = parent.pop(index)
         lyrics = parent.pop(index)
         combined = s.combine(chords.text, lyrics.text)
-        combined.append('\n') # keep lines separate
+        combined.append('\\\\\n') # keep lines separate
         combined.reverse()
         for item in combined:
             parent.insert(index, item)
 
 
-            
+
 class Command(object):
     """Represents a command within a song file"""
     def __init__(self, text):
         self.text = text.strip()
         textlist = self.text.split()
         self.command = textlist[0].lower()
-        
+
         if len(textlist) == 1:
             self.command_arg = None
         else:
@@ -203,6 +203,14 @@ def parenthesis_to_latex(index, element, parent):
             text = match.groups()[0]
             parent[index] = latex_command("emph", "({})".format(text))
 
+def remove_parenthesis(index, element, parent):
+    """Remove any words surrounded by parenthesis"""
+    if isinstance(element, s.Text):
+        match = re.search(parenthesis_regex, element.text)
+        if match is not None:
+            parent.pop(index)
+
+
 def spacing_to_latex(index, element, parent):
     """Produce latex code to handle explicit spacing between words"""
     if isinstance(element, s.Text):
@@ -214,20 +222,21 @@ def ampersand_to_latex(index, element, parent):
         parent[index] = element.text.replace('&', '\&')
 
 # maps song file commands to their equivalent latex command
-command_map = {"title": "songtitle", 
-               "by": "by", 
-               "comment": "comment", 
-               "capo": "capo", 
-               "scripture": "scripture", 
+command_map = {"title": "songtitle",
+               "by": "by",
+               "comment": "comment",
+               "capo": "capo",
+               "scripture": "scripture",
                "order": "order",
-               "verse": "verse", 
-               "chorus": "chorus", 
-               "prechorus": "prechorus", 
-               "bridge": "bridge", 
-               "intro": "intro", 
+               "verse": "verse",
+               "chorus": "chorus",
+               "prechorus": "prechorus",
+               "bridge": "bridge",
+               "intro": "intro",
                "outro": "outro",
                "tag": "tagline",
-               "break": "songbreak"}
+               "break": "songbreak",
+               "format": "songformat"}
 
 def check_command_validity(index, element, parent):
     """Check that commands are valid song file ones"""
@@ -270,10 +279,10 @@ def remove_order(index, element, parent):
 
 def elements_to_string(songlist):
     """Combine all elements into a string separated by newlines"""
-    songlist.append('\n\n\\')
+    songlist.append('\n')
     songlist = [element[0] for element in songlist]
     return '\n'.join(songlist)
-        
+
 
 
 def compile_chords(filename):
@@ -301,7 +310,7 @@ def compile_chords(filename):
     apply_pass(song, identify_text)
     apply_pass(song, merge_chords_lyrics)
     apply_pass(song, identify_text)
-    
+
 
     # handle order
     apply_pass(song, handle_chords_order)
@@ -320,7 +329,7 @@ def compile_chords(filename):
 
     # # combine all elements into a single string
     song = elements_to_string(song)
-    
+
     return song
 
 
@@ -350,7 +359,8 @@ def compile_slides(filename):
     apply_pass(song, remove_capo)
     apply_pass(song, remove_order)
     apply_pass(song, identify_text)
-    
+    apply_pass(song, remove_parenthesis)
+
 
     # # handle order
     #apply_pass(song, chords_ordering)
@@ -364,18 +374,13 @@ def compile_slides(filename):
     # apply_pass(song, command_to_latex)
 
     # # final clean up of empty lists
-    # remove_empty_list(song)
+    #remove_empty_list(song)
 
     # # combine all elements into a single string
-    # song = elements_to_string(song)
+    #song = elements_to_string(song)
 
     return song
 
 if __name__ == '__main__':
-    #song = compile_chords('songs/Cannons.txt')
-    song = compile_slides('songs/Cannons.txt')
-    
-
-    
-
-    
+    song = compile_chords('songs/Cannons.txt')
+    #song = compile_slides('songs/Cannons.txt')
