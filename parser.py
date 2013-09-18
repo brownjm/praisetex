@@ -173,6 +173,34 @@ def handle_chords_order(index, element, parent):
             args.append(parent.pop(1).text)
         parent.append(', '.join(args))
 
+
+def handle_slides_order(song):
+    stanzas = ["verse", "chorus", "prechorus", "bridge", "intro", "outro", "tag", "break", "order"]
+    stanzadict = {}
+    newsong = []
+
+    def collect(index, element, parent):
+        if isinstance(element, Command):
+            if element.command in stanzas:
+                stanzadict[element.text] = parent
+            else:
+                newsong.append(parent)
+
+    apply_pass(song, collect)
+
+    if "order" in stanzadict:
+        order = stanzadict["order"]
+    else:
+        return song
+
+    order = [item.text for item in order[1:]]
+    
+    for stanza in order:
+        newsong.append(stanzadict[stanza])
+
+    return newsong
+
+
 # latex generation
 def latex_command(command, arg):
     """Returns a latex command with a single argument"""
@@ -251,12 +279,28 @@ def command_to_latex(index, element, parent):
         if element.command_arg != None:
             command = command + "[~" + element.command_arg + "]"
 
-        print(command)
+        #print(command)
 
         args = parent[1:]
         for i in range(len(args)):
             parent.pop(-1)
         parent[index] = latex_command(command, ''.join(args))
+
+def slides_command_to_latex(index, element, parent):
+    """Produce latex code for the slides commands and their arguments"""
+    if isinstance(element, Command):
+        command = command_map[element.command]
+        if element.command_arg != None:
+            command = command + "[~" + element.command_arg + "]"
+
+        #print(command)
+
+        args = parent[1:]
+        for i in range(len(args)):
+            parent.pop(-1)
+        parent[index] = latex_command(command, '\\\\\n'.join(args))
+
+
 
 def remove_chords(index, element, parent):
     """Remove chords from song"""
@@ -276,6 +320,12 @@ def remove_order(index, element, parent):
         #    parent.pop(-1)
         del parent[:] # clear contents of parent list
         #parent.clear() # python 3 only
+
+def remove_empty_latex_commands(index, element, parent):
+    """Removes empty latex commands"""
+    if isinstance(element, str):
+        if "{}" in element:
+            parent.pop(index)
 
 def elements_to_string(songlist):
     """Combine all elements into a string separated by newlines"""
@@ -356,31 +406,38 @@ def compile_slides(filename):
     # process chords and lyrics
     apply_pass(song, identify_chordlines)
     apply_pass(song, remove_chords)
+    apply_pass(song, remove_chords)
     apply_pass(song, remove_capo)
-    apply_pass(song, remove_order)
+
     apply_pass(song, identify_text)
     apply_pass(song, remove_parenthesis)
+    remove_empty_list(song)
+    #apply_pass(song, print_item)
 
 
     # # handle order
-    #apply_pass(song, chords_ordering)
+    song = handle_slides_order(song)
+    #apply_pass(song, print_item)
+
 
     # # latex generation
-    apply_pass(song, chord_to_latex)
-    apply_pass(song, chordline_to_latex)
+    #apply_pass(song, chord_to_latex)
+    #apply_pass(song, chordline_to_latex)
     # apply_pass(song, parenthesis_to_latex)
-    # apply_pass(song, spacing_to_latex)
-    # apply_pass(song, ampersand_to_latex)
-    # apply_pass(song, command_to_latex)
+    #apply_pass(song, spacing_to_latex)
+    apply_pass(song, ampersand_to_latex)
+    apply_pass(song, slides_command_to_latex)
 
     # # final clean up of empty lists
-    #remove_empty_list(song)
+    remove_empty_list(song)
+    apply_pass(song, remove_empty_latex_commands)
+    remove_empty_list(song)
 
     # # combine all elements into a single string
-    #song = elements_to_string(song)
+    song = elements_to_string(song)
 
     return song
 
 if __name__ == '__main__':
-    song = compile_chords('songs/Cannons.txt')
-    #song = compile_slides('songs/Cannons.txt')
+    #song = compile_chords('songs/Cannons.txt')
+    song = compile_slides('songs/Breathe.txt')
