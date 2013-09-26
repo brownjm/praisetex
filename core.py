@@ -210,7 +210,7 @@ class PraiseTex(object):
             lines = f.readlines()
 
         # find line number ranges where \input{song.tex} should be
-        begin = lines.index("\\begin{multicols}{1}\n") + 1
+        begin = lines.index("\\begin{multicols}{2}\n") + 1
         end = lines.index("\\end{multicols}\n")
         top = lines[:begin]
         bottom = lines[end:]
