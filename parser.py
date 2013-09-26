@@ -194,7 +194,7 @@ def handle_slides_order(song):
         return song
 
     order = [item.text for item in order[1:]]
-    
+
     for stanza in order:
         newsong.append(stanzadict[stanza])
 
@@ -372,7 +372,9 @@ def compile_chords(filename):
     apply_pass(song, parenthesis_to_latex)
     apply_pass(song, spacing_to_latex)
     apply_pass(song, ampersand_to_latex)
+    apply_pass(song, remove_empty_latex_commands)
     apply_pass(song, command_to_latex)
+
 
     # final clean up of empty lists
     remove_empty_list(song)
@@ -439,5 +441,6 @@ def compile_slides(filename):
     return song
 
 if __name__ == '__main__':
-    #song = compile_chords('songs/Cannons.txt')
-    song = compile_slides('songs/Breathe.txt')
+    songname = 'songs/OLoveThatWillNotLetMeGo.txt'
+    song = compile_chords(songname)
+    #song = compile_slides(songname)
