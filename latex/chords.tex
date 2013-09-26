@@ -1,7 +1,7 @@
 %    praiseTex - simple set of programs for creating praise music material, 
 %    such as guitar chord sheets and presentation slides
 %
-%    Copyright (C) 2012 Jeffrey M Brown
+%    Copyright (C) 2013 Jeffrey M Brown
 %    brown.jeffreym@gmail.com
 %
 %    This program is free software: you can redistribute it and/or modify
@@ -35,105 +35,47 @@
 \parindent = 0mm
 \widowpenalty = 10000
 \clubpenalty = 10000
-%\renewcommand{\thesection}{\Alph{section}}
-%\setcounter{section}{19}
 
-% set song title
-%\newcommand{\songtitle}[1]{\subsection{#1}}
-%\newcommand{\songtitle}[1]{\section{#1}}
+% font style
+\newcommand{\headerfont}[1]{\emph{\small #1}}
+\newcommand{\stanzafont}[1]{\textbf{#1}}
+
+% formatting for header commands
 \newcommand{\songtitle}[1]{\textbf{\huge #1}\\}
+\newcommand{\by}[1]{#1\\}
+\newcommand{\comment}[1]{\headerfont{#1}\\}
+\newcommand{\scripture}[1]{\headerfont{#1}\\}
+\newcommand{\capo}[1]{\headerfont{Capo: #1}\\}
+\newcommand{\order}[1]{\headerfont{Order: #1}\\}
 
-% assign the author
-%% \newcommand{\by}[1] {
-%%   \vspace{-2mm}
-%%   \hspace{11mm}\emph{#1}\\
-%%   \vspace{-3mm}
-%% }
-\newcommand{\by}[1] {
-  %\emph{#1}\\
-  \textbf{#1}\\
-}
-
-% comments for musicians
-\newcommand{\comment}[1] {
-  \emph{\small #1}\\
-}
-
-% scripture
-\newcommand{\scripture}[1] {
-  \emph{\small #1}\\
-}
-
-\newcommand{\capo}[1] {
-  \emph{\small Capo: #1}\\
-}
-
-% song ordering
-\newcommand{\order}[1]{
-  \emph{\small Order: #1}\\
-}
-
-% create a verse
-%% \renewcommand{\verse}[1]{
-%% \emph{verse:}\\
-%%   #1\\
-%% }
+% formatting for stanza commands
 \renewcommand{\verse}[2][]{
-\emph{verse#1:}\\
+  \stanzafont{verse#1:}\\
   #2\\
 }
 
-
-% create a prechorus
-%% \newcommand{\prechorus}[1] {
-%%   \vspace{-4mm}
-%%   \begin{quote}
-%%     \emph{prechorus:}\\
-%%     \hspace{1mm}#1
-%%   \end{quote}
-%%   \vspace{-2mm}
-%% }
 \newcommand{\prechorus}[2][] {
   \vspace{-4mm}
   \begin{quote}
-    \emph{prechorus#1:}\\
+    \stanzafont{prechorus#1:}\\
     \hspace{1mm}#2
   \end{quote}
   \vspace{-2mm}
 }
 
-
-% create a chorus
-%% \newcommand{\chorus}[1] {
-%%   \vspace{-4mm}
-%%   \begin{quote}
-%%     \emph{chorus:}\\
-%%     \hspace{1mm}#1\\
-%%   \end{quote}
-%%   \vspace{-2mm}
-%% }
 \newcommand{\chorus}[2][] {
   \vspace{-4mm}
   \begin{quote}
-    \emph{chorus#1:}\\
+    \stanzafont{chorus#1:}\\
     \hspace{1mm}#2\\
   \end{quote}
   \vspace{-2mm}
 }
 
-% create a bridge
-%% \newcommand{\bridge}[1] {
-%%   \vspace{-3mm}
-%%   \begin{quote}
-%%     \emph{bridge:}\\
-%%     \hspace{1mm}#1\\
-%%   \end{quote}
-%%   \vspace{-3mm}
-%% }
 \newcommand{\bridge}[2][] {
   \vspace{-3mm}
   \begin{quote}
-    \emph{bridge#1:}\\
+    \stanzafont{bridge#1:}\\
     \hspace{1mm}#2\\
   \end{quote}
   \vspace{-3mm}
@@ -141,20 +83,20 @@
 
 % intro or beginning of a song
 \newcommand{\intro}[1] {
-  \emph{intro:}\\
+  \stanzafont{intro:}\\
   #1\\
 }
 
 % outro or ending of a song
 \newcommand{\outro}[1] {
-  \emph{outro:}\\
+  \stanzafont{outro:}\\
   #1\\
 }
 
 \newcommand{\tagline}[2][] {
   \vspace{-4mm}
   \begin{quote}
-    \emph{tag#1:}\\
+    \stanzafont{tag#1:}\\
     \hspace{1mm}#2
   \end{quote}
   \vspace{-2mm}
@@ -163,28 +105,20 @@
 \newcommand{\songbreak}[2][] {
   \vspace{-4mm}
   \begin{quote}
-    \emph{break#1:}\\
+    \stanzafont{break#1:}\\
     \hspace{1mm}#2
   \end{quote}
   \vspace{-2mm}
 }
 
 
-% place a chord above following letter
+% formatting for chords
 \newcommand{\chord}[1] {$\vspace{0.1mm}\stackrel{\makebox[0mm][l]{\hspace{1mm}\footnotesize{\textbf{#1\phantom{/}}}}}{^{^{^{}}}}$}
 
 % place a chord above and to the left of following letter
 \newcommand{\chordleft}[1] {$\vspace{0.1mm}\stackrel{\makebox[0mm][r]{\hspace{1mm}\footnotesize{\textbf{#1\phantom{/}}}}}{^{^{^{}}}}$}
 
-% create a line consisting of only chords
-% \newcommand{\chordline}[1] {
-%   \small{\textbf{#1}\\}
-% }
-\newcommand{\chordline}[1] {
-  \small{\textbf{#1}}\\
-}
-
-
+\newcommand{\chordline}[1]{\small{\textbf{#1}}\\}
 \newcommand{\songformat}[1]{#1}
 
 % directions to other parts of the song
@@ -197,16 +131,14 @@
 % disable unused commands
 \newcommand{\framebreak}{}
 \newcommand{\slidesonly}[1]{}
-%\renewcommand{\chord}[1]{}
-%\renewcommand{\chordleft}[1]{}
-%\renewcommand{\chordline}[1]{}
 
+% below is the document template for a chordsheet
 \title{GCF Praise Book}
 \author{Jeffrey M. Brown}
 \date{\today}
 
 \begin{document}
-\begin{multicols}{1}
+\begin{multicols}{2}
   % input songs here
   \input{songs/YourLoveIsExtravagant.tex}
 \end{multicols}
