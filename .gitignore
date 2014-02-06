@@ -1,5 +1,4 @@
 
-TODO/*
 *~
 *.pdf
 *.out
@@ -9,6 +8,3 @@ TODO/*
 *.pyc
 
 !.gitignore
-TODO
-convert
-oldformat
