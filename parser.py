@@ -55,7 +55,7 @@ def split_by_colon(index, element, parent):
         return
     if ':' in element:
         parent.pop(index)
-        first, second = element.split(':')
+        first, second = element.split(':', 1)
         parent.insert(index, second)
         parent.insert(index, first)
 
@@ -379,7 +379,7 @@ def compile_chords(filename):
     # final clean up of empty lists
     remove_empty_list(song)
 
-    # # combine all elements into a single string
+    # combine all elements into a single string
     song = elements_to_string(song)
 
     return song
@@ -441,6 +441,6 @@ def compile_slides(filename):
     return song
 
 if __name__ == '__main__':
-    songname = 'songs/OLoveThatWillNotLetMeGo.txt'
+    songname = 'songs/Stronger.txt'
     song = compile_chords(songname)
     #song = compile_slides(songname)
