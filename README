@@ -40,12 +40,6 @@ you'd prefer a command line version use
 to print out a helpful list of all the options. 
 
 
-All song files must adhere to the format shown in
-ExampleSong.txt. Song files are written in plain ascii text using any
-simple text editor (not MS word or OpenOffice, just plain
-text). Please put your songs into the folder 'songs'.
-
-
 Important: Do not edit the files inside the folder 'latex' unless you
 know what you are doing. They are used as templates for producing
 chordsheets and slides.
