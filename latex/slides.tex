@@ -78,9 +78,36 @@
   \end{frame}
 }
 
+\newcommand{\songbreak}[2][]{
+  \begin{frame}
+    \frametitle{Break#1}
+    \begin{center}
+      {#2}
+    \end{center}
+  \end{frame}
+}
+
+\newcommand{\interlude}[2][]{
+  \begin{frame}
+    \frametitle{Interlude#1}
+    \begin{center}
+      {#2}
+    \end{center}
+  \end{frame}
+}
+
 \newcommand{\tagline}[2][]{
 \begin{frame}[allowframebreaks] % extra long bridges
     \frametitle{Tag#1}
+    \begin{center}
+      {#2}
+    \end{center}
+  \end{frame}
+}
+
+\newcommand{\outro}[2][]{
+\begin{frame}[allowframebreaks] % extra long bridges
+    \frametitle{Outro#1}
     \begin{center}
       {#2}
     \end{center}
@@ -102,9 +129,8 @@
 \newcommand{\comment}[1]{}
 \newcommand{\columnbreak}{}
 \newcommand{\intro}[1]{}
-\newcommand{\outro}[1]{}
 \newcommand{\echo}{}
-\newcommand{\songbreak}[2][]{}
+
 \newcommand{\order}[1]{}
 \newcommand{\capo}[1]{}
 \newcommand{\songformat}[1]{}

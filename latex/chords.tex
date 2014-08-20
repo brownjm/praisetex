@@ -41,7 +41,7 @@
 \newcommand{\stanzafont}[1]{\textbf{#1}}
 
 % formatting for header commands
-\newcommand{\songtitle}[1]{\textbf{\huge #1}\\}
+\newcommand{\songtitle}[1]{\columnbreak\textbf{\huge #1}\\}
 \newcommand{\by}[1]{#1\\}
 \newcommand{\comment}[1]{\headerfont{#1}\\}
 \newcommand{\scripture}[1]{\headerfont{#1}\\}
@@ -50,35 +50,43 @@
 
 % formatting for stanza commands
 \renewcommand{\verse}[2][]{
+  \begin{minipage}{\columnwidth}
   \stanzafont{verse#1:}\\
   #2\\
+  \end{minipage}
 }
 
 \newcommand{\prechorus}[2][] {
-  \vspace{-4mm}
+  \begin{minipage}{\columnwidth}
+  %\vspace{-4mm}
   \begin{quote}
     \stanzafont{prechorus#1:}\\
     \hspace{1mm}#2
   \end{quote}
-  \vspace{-2mm}
+  %\vspace{-2mm}
+  \end{minipage}
 }
 
 \newcommand{\chorus}[2][] {
-  \vspace{-4mm}
+\begin{minipage}{\columnwidth}
+  %\vspace{-4mm}
   \begin{quote}
     \stanzafont{chorus#1:}\\
     \hspace{1mm}#2\\
   \end{quote}
-  \vspace{-2mm}
+  %\vspace{-2mm}
+\end{minipage}
 }
 
 \newcommand{\bridge}[2][] {
-  \vspace{-3mm}
+  \begin{minipage}{\columnwidth}
+  %\vspace{-3mm}
   \begin{quote}
     \stanzafont{bridge#1:}\\
     \hspace{1mm}#2\\
   \end{quote}
-  \vspace{-3mm}
+  %\vspace{-3mm}
+  \end{minipage}
 }
 
 % intro or beginning of a song
@@ -94,29 +102,60 @@
 }
 
 \newcommand{\tagline}[2][] {
-  \vspace{-4mm}
+  %\vspace{-4mm}
   \begin{quote}
     \stanzafont{tag#1:}\\
     \hspace{1mm}#2
   \end{quote}
-  \vspace{-2mm}
+  %\vspace{-2mm}
 }
 
 \newcommand{\songbreak}[2][] {
-  \vspace{-4mm}
+  %\vspace{-4mm}
   \begin{quote}
     \stanzafont{break#1:}\\
     \hspace{1mm}#2
   \end{quote}
-  \vspace{-2mm}
+  %\vspace{-2mm}
+}
+
+\newcommand{\interlude}[2][] {
+  \begin{minipage}{\columnwidth}
+  %\vspace{-4mm}
+  \begin{quote}
+    \stanzafont{interlude#1:}\\
+    \hspace{1mm}#2
+  \end{quote}
+  %\vspace{-2mm}
+  \end{minipage}
 }
 
 
 % formatting for chords
-\newcommand{\chord}[1] {$\vspace{0.1mm}\stackrel{\makebox[0mm][l]{\hspace{1mm}\footnotesize{\textbf{#1\phantom{/}}}}}{^{^{^{}}}}$}
+% must change chord command to better handle placement
+% ex: 
+%      Em7
+%   Some lyrics
+% This should be typeset the same as the plain text
+
+% possible alternatives:
+% \makeatletter
+% \newcommand{\stackover}{\genfrac{.}{.}\z@{}}
+% \makeatother
+% \[\stackover{a}{b}\]
+
+% another:
+% \stackrel{\mathrm{a}}{\mathrm{b}}
+
+% original = bad placement of long chords
+%{$\vspace{0.1mm}\stackrel{\makebox[0mm][l]{\hspace{1mm}\footnotesize{\textbf{#1\phantom{/}}}}}{^{^{^{}}}}$}
+
+% vspace to make the chords closer to the bottom line than the line above
+% hspace to remove gap between letters that this command causes, the kerning looks better most of the time with hspace{-0.3mm}
+\newcommand{\chord}[1] {$\vspace{+0.2mm}\stackrel{\makebox[0mm][l]{\hspace{1mm}\footnotesize{\textbf{#1\phantom{/}}}}}{^{^{^{}}}}\hspace{-0.3mm}$}
 
 % place a chord above and to the left of following letter
-\newcommand{\chordleft}[1] {$\vspace{0.1mm}\stackrel{\makebox[0mm][r]{\hspace{1mm}\footnotesize{\textbf{#1\phantom{/}}}}}{^{^{^{}}}}$}
+\newcommand{\chordleft}[1] {$\stackrel{\makebox[0mm][r]{\hspace{1mm}\footnotesize{\textbf{#1\phantom{/}}}}}{^{^{^{}}}}$}
 
 \newcommand{\chordline}[1]{\small{\textbf{#1}}\\}
 \newcommand{\songformat}[1]{#1}
@@ -138,6 +177,7 @@
 \date{\today}
 
 \begin{document}
+\pagenumbering{gobble}
 \begin{multicols}{2}
   % input songs here
   \input{songs/YourLoveIsExtravagant.tex}
