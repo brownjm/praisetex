@@ -7,4 +7,9 @@
 *.tex
 *.pyc
 
+tmp
+src
+newparser.py
+nanopass.py
+
 !.gitignore
