@@ -1,6 +1,6 @@
 title: Be Thou My Vision
 by: Irish hymn, 1905
-order: verse 1, verse 2, verse 3, verse 4, verse 5
+order: verse 1, verse 2, verse 3, verse 4, verse 5, tag
 
 verse 1:
 D          G A       D       A  D
@@ -56,3 +56,8 @@ Heart of my own heart, whatever befall
 D           Bm        Em    A  D
 Still be my vision, O ruler of all.
 
+tag:
+G           D              Bm     G A
+Heart of my own heart, whatever befall
+D           Bm        Em    A  D
+Still be my vision, O ruler of all.
