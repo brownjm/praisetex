@@ -38,31 +38,11 @@ def runGUI():
     app = gui.PraiseTexGUI(os.path.join(praisetex_dir, "songs"))
     app.run()
 
-# def convert(filename):
-#     for filename in args.filename:
-#         print("Converting chord sheet: {}".format(filename))
-#         converter = csc.ChordConverter()
-#         try:
-#             converter.convert(filename)
-#         except IOError as ioe:
-#             print(ioe)
-#             sys.exit()
-
-# def transpose(filenames, numHalfSteps):
-#     if numHalfSteps != 0:
-#         for filename in filenames:
-#             print("Transposing {} by {} half steps".format(filename, numHalfSteps))
-#             s = core.Song(filename)
-#             s.transpose(numHalfSteps)
-#             newfilename = '{0}{1:+2d}'.format(filename, numHalfSteps)
-#             s.write(newfilename)
-#             print("Wrote new file: {}".format(newfilename))
-
 
 def chords(filename):
     if len(filename) > 0:
         print("Creating chords from: {}".format(args.filename))
-        songList = [f for f in filename]
+        songList = [os.path.basename(f) for f in filename]
         praisetex = core.PraiseTex()
         praisetex.refreshSongList()
         index = 0
@@ -78,7 +58,7 @@ def chords(filename):
 def slides(filename):
     if len(filename) > 0:
         print("Creating slides from: {}".format(args.filename))
-        songList = [song.Song(f).attributes["title"] for f in filename]
+        songList = [os.path.basename(f) for f in filename]
         praisetex = core.PraiseTex()
         praisetex.refreshSongList()
         index = 0
