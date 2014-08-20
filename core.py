@@ -24,7 +24,6 @@ from collections import deque
 import re
 import os
 import subprocess
-#import chord_sheet_converter as csc
 import song
 import latex
 import parser
@@ -63,7 +62,8 @@ class ChordMap(object):
         return self.chordDict[chord]
 
     def transpose(self, chord):
-        chordstr = re.split(r'(/| |\d|m|M|sus|maj)', chord) # split by /, space and number
+        # split by /, space and number
+        chordstr = re.split(r'(/| |\d|m|M|sus|maj)', chord) 
         newChordList = []
         for chord in chordstr:
             if chord in self.chords:
@@ -71,85 +71,6 @@ class ChordMap(object):
             newChordList.append(chord)
         return ''.join(newChordList)
 
-
-# class Song(object):
-#     """Representing a song file"""
-#     def __init__(self, filename, commands=commandDict):
-#         self.filename = filename
-#         self.title = os.path.basename(filename) # fallback name
-#         self.commands = commands
-
-#         with open(filename, 'r') as f:
-#             self.text = f.read()
-
-#         self.getAttributes()
-
-#     def write(self, filename):
-#         """Write the song to a file (protects against overwriting original)"""
-#         if filename == self.filename:
-#             raise NameError("Cannot overwrite original file '{}', please choose another filename.".format(self.filename))
-#         with open(filename, 'w') as f:
-#             for line in self.text:
-#                 f.write(line)
-
-#     def getAttributes(self):
-#         for attr, latexcommand in self.commands.items():
-#             m = re.search(r'\\' + latexcommand + r'\{([^{]*)\}', self.text)
-#             if m is not None:
-#                 setattr(self, attr, m.groups()[0])
-
-#     def transpose(self, numHalfSteps):
-#         """Transpose each chord within song by specified number of half steps"""
-#         cm = ChordMap(numHalfSteps)
-#         stringList = []
-#         text = self.text
-
-#         match = re.search(chordCommand, text)
-#         while match is not None:
-#             before = text[:match.start()] # up to chord
-#             chord = text[match.start():match.end()] # chord
-#             stringList.append(before)
-
-#             # find which command matched and grab actual chord
-#             ch, left, line = match.groups()
-#             if ch is not None:
-#                 command = '\chord{{{}}}'
-#                 letter = ch
-#             elif left is not None:
-#                 command = '\chordleft{{{}}}'
-#                 letter = left
-#             elif line is not None:
-#                 command = '\chordline{{{}}}'
-#                 letter = line
-#             else:
-#                 raise 'No chord match found'
-
-#             newletter = cm.transpose(letter) # transposition
-#             stringList.append(command.format(newletter)) # add new chord
-#             text = text[match.end():] # focus on remaining string
-#             match = re.search(chordCommand, text) # search rest of text
-
-#         stringList.append(text) # add final string
-#         self.text = ''.join(stringList)
-
-#     def locateCommands(self):
-#         """Build a list of songs commands and their locations"""
-#         with open(self.filename, 'r') as f:
-#             text = f.readlines()
-
-#         linenum = 0
-#         commands = []
-
-#         for line in text:
-#             # matches latex command pattern: \command{argument}
-#             matches = re.finditer(latexCommandPattern, line)
-#             for match in matches:
-#                 command, arg = match.groups()
-#                 span = match.regs[-1]
-#                 commands.append((command, arg, linenum, span))
-#             linenum += 1
-
-#         return commands
 
 
 class PraiseTex(object):
@@ -159,18 +80,6 @@ class PraiseTex(object):
         #self.songs = {}
         self.songs = []
         self.compile = []
-
-    # def refreshSongList(self):
-    #     """Reload available songs found in songs directory"""
-    #     self.songs.clear()
-    #     filenames = os.listdir(self.songdir)
-    #     # keep only song filenames ending with tex or underscore
-    #     filenames = [song for song in filenames if song.endswith('.txt') or song.endswith('___')]
-    #     songs = [song.Song(os.path.join(self.songdir, fn)) for fn in filenames]
-    #     self.songs = dict([(song.attributes["title"], song) for song in songs])
-    #     songlist = list(self.songs.keys())
-    #     songlist.sort() # alphabetize
-    #     return songlist
 
     def refreshSongList(self):
         """Reload the song found in 'songs' directory"""
@@ -218,10 +127,17 @@ class PraiseTex(object):
         # create text from template and songs to pass to pdflatex
         ctmp = []
         ctmp.extend(top)
+        # count = 0
         for song in self.compile:
-            #ctmp.append(latex.song_to_latex(song, style="chordsheet"))
             fullpathfilename = os.path.join(self.songdir, song)
-            ctmp.append(parser.compile_chords(fullpathfilename))
+            songtext = parser.compile_chords(fullpathfilename)
+            ctmp.append(songtext)
+            # with open('tmp/{}.tex'.format(song.replace('.txt', '')), 'w') as f:
+            #     f.writelines(top)
+            #     f.writelines(songtext)
+            #     f.writelines(bottom)
+            # count += 1
+            
         ctmp.extend(bottom)
         with open("ctmp.tex", "w") as f:
             f.writelines(ctmp)
@@ -256,7 +172,6 @@ class PraiseTex(object):
         stmp = []
         stmp.extend(top)
         for song in self.compile:
-            #stmp.append(latex.song_to_latex(song, style="slides"))
             fullpathfilename = os.path.join(self.songdir, song)
             stmp.append(parser.compile_slides(fullpathfilename))
         stmp.extend(bottom)
@@ -265,7 +180,7 @@ class PraiseTex(object):
 
         # compile document
         error = subprocess.call(["pdflatex", "-halt-on-error",  "\\pdfminorversion=4", "\\input{stmp.tex}"])
-        #error = subprocess.call(["pdflatex", "-halt-on-error", "\\input{stmp.tex}"])
+        
         if not error:
             os.rename("stmp.pdf", "slides.pdf")
 
@@ -276,11 +191,6 @@ class PraiseTex(object):
                 os.remove(f)
 
         return error
-
-    # def convert(self, filename):
-    #     """Converts online guitar chord sheet format into song file format"""
-    #     converter = csc.ChordConverter()
-    #     converter.convert(filename)
 
 
 if __name__ == '__main__':
