@@ -92,23 +92,42 @@ def cleanup_capo_command(index, element, parent):
             parent[1] = s.Text(parent[1].text.strip())
 
 def merge_chords_lyrics(index, element, parent):
-    if not isinstance(element, s.Chordline):
-        return
+    if isinstance(element, s.Chordline):
         # handle dangling chordline at end of stanza
-    if index == len(parent)-1: # if last element of parent
-        return
-    elif isinstance(parent[index+1], s.Chordline):
-        # next line is also a chordline
-        return
-    else:
-        # next line is lyrics
-        chords = parent.pop(index)
-        lyrics = parent.pop(index)
-        combined = s.combine(chords.text, lyrics.text)
-        combined.append('\\\\\n') # keep lines separate
-        combined.reverse()
-        for item in combined:
-            parent.insert(index, item)
+        if index == len(parent)-1: # if last element of parent
+            return
+        elif isinstance(parent[index+1], s.Chordline):
+            # next line is also a chordline
+            return
+        else:
+            # next line is lyrics
+            chords = parent.pop(index)
+            lyrics = parent.pop(index)
+            combined = s.combine(chords.text, lyrics.text)
+            combined.append('\\\\\n') # keep lines separate
+            combined.reverse()
+            for item in combined:
+                parent.insert(index, item)
+
+    if isinstance(element, s.Text):
+        if index == len(parent) - 1: # last element
+            return
+        elif isinstance(parent[index+1], s.Text) or isinstance(parent[index+1], s.Chordline): # consecutive lyric lines
+            element.text += '\\\\\n'
+
+def handle_multiple_lyrics(index, element, parent):
+    """handle case of multiple lines of lyrics"""
+    if isinstance(element, s.Text):
+        if index == len(parent)-1: # if last element of parent
+            pass
+            #element.text += '\\\\\n'
+        elif isinstance(parent[index+1], s.Text) or isinstance(parent[index+1], s.Chordline):
+            if parent[index+1].text != '\\\\\n' and parent[index].text != '\\\\\n':
+                # next line is also lyrics, therefore keep it a separate line
+                element.text += '\\\\\n'
+        else:
+            pass
+            #element.text# += '\\\\\n'
 
 
 
@@ -187,7 +206,7 @@ def handle_slides_order(song):
                 newsong.append(parent)
 
     apply_pass(song, collect)
-
+    #print stanzadict
     if "order" in stanzadict:
         order = stanzadict["order"]
     else:
@@ -220,6 +239,10 @@ def chordline_to_latex(index, element, parent):
         chords = chords.replace('b', '$\\flat$') # change to latex's flat symbol
         parent[index] = latex_command("chordline", chords)
 
+def text_to_latex(index, element, parent):
+    """Returns latex command for Text class"""
+    if isinstance(element, s.Text):
+        parent[index] = element.text + '\\\\'
 
 parenthesis_regex = re.compile("\((.+)\)")
 
@@ -228,8 +251,9 @@ def parenthesis_to_latex(index, element, parent):
     if isinstance(element, s.Text):
         match = re.search(parenthesis_regex, element.text)
         if match is not None:
-            text = match.groups()[0]
-            parent[index] = latex_command("emph", "({})".format(text))
+            oldtext = match.group()
+            newtext = latex_command("emph", "({})".format(oldtext[1:-1]))
+            element.text = element.text.replace(oldtext, newtext)
 
 def remove_parenthesis(index, element, parent):
     """Remove any words surrounded by parenthesis"""
@@ -264,6 +288,7 @@ command_map = {"title": "songtitle",
                "outro": "outro",
                "tag": "tagline",
                "break": "songbreak",
+               "interlude": "interlude",
                "format": "songformat"}
 
 def check_command_validity(index, element, parent):
@@ -333,7 +358,11 @@ def elements_to_string(songlist):
     songlist = [element[0] for element in songlist]
     return '\n'.join(songlist)
 
+def page_breaks(song):
+    return song + '\n\pagebreak\n'
 
+def column_breaks(song):
+    return song + '\n\columnbreak\n'
 
 def compile_chords(filename):
     """Converts a song file into latex code for a chordsheet"""
@@ -358,14 +387,14 @@ def compile_chords(filename):
     # process chords and lyrics
     apply_pass(song, identify_chordlines)
     apply_pass(song, identify_text)
-    apply_pass(song, merge_chords_lyrics)
-    apply_pass(song, identify_text)
-
-
-    # handle order
     apply_pass(song, handle_chords_order)
     remove_empty_list(song)
-
+    apply_pass(song, merge_chords_lyrics)
+    
+    apply_pass(song, identify_text)
+    apply_pass(song, handle_multiple_lyrics)
+    apply_pass(song, identify_text)
+    
     # latex generation
     apply_pass(song, chord_to_latex)
     apply_pass(song, chordline_to_latex)
@@ -381,6 +410,7 @@ def compile_chords(filename):
 
     # combine all elements into a single string
     song = elements_to_string(song)
+    song = song.replace('\\\\\n\\\\\n', '\\\\\n') # remove double newlines
 
     return song
 
@@ -412,10 +442,10 @@ def compile_slides(filename):
     apply_pass(song, remove_capo)
 
     apply_pass(song, identify_text)
-    apply_pass(song, remove_parenthesis)
+
+    #apply_pass(song, remove_parenthesis)
     remove_empty_list(song)
     #apply_pass(song, print_item)
-
 
     # # handle order
     song = handle_slides_order(song)
@@ -441,6 +471,6 @@ def compile_slides(filename):
     return song
 
 if __name__ == '__main__':
-    songname = 'songs/Stronger.txt'
+    songname = 'songs/ICannotTell.txt'
     song = compile_chords(songname)
     #song = compile_slides(songname)
