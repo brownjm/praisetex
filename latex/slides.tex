@@ -1,7 +1,7 @@
 %    praiseTex - simple set of programs for creating praise music material, 
 %    such as guitar chord sheets and presentation slides
 %
-%    Copyright (C) 2012 Jeffrey M Brown
+%    Copyright (C) 2013 Jeffrey M Brown
 %    brown.jeffreym@gmail.com
 %
 %    This program is free software: you can redistribute it and/or modify
@@ -33,52 +33,86 @@
 \newcommand{\songtitle}[1]{\title{#1}}
 
 % assign author and create title slide
-\newcommand{\by}[1] {
+\newcommand{\by}[1]{
   \author{#1}
   \maketitle
 }
 
 % create a chorus slide
-\newcommand{\chorus}[1] {
+\newcommand{\chorus}[2][]{
   \begin{frame}[allowframebreaks] % extra long chorus
-    \frametitle{Chorus}
+    \frametitle{Chorus#1}
     \begin{center}
-      {#1}
+      {#2}
     \end{center}
   \end{frame}
 }
 
 % create a pre-chorus slide
-\newcommand{\prechorus}[1] {
+\newcommand{\prechorus}[2][]{
   \begin{frame}[allowframebreaks] % extra long prechorus
-    \frametitle{Pre-Chorus}
+    \frametitle{Pre-Chorus#1}
     \begin{center}
-      {#1}
+      {#2}
     \end{center}
   \end{frame}
 }
 
 % create a verse slide
-\renewcommand{\verse}[1]{
+\renewcommand{\verse}[2][]{
   \begin{frame}[allowframebreaks] % extra long verses
-    \frametitle{Verse}
+    \frametitle{Verse#1}
     \begin{center}
-      {#1}
+      {#2}
     \end{center}
   \end{frame}
 }
 
 % create a bridge slide
-\newcommand{\bridge}[1]{
+\newcommand{\bridge}[2][]{
   \begin{frame}[allowframebreaks] % extra long bridges
-    \frametitle{Bridge}
+    \frametitle{Bridge#1}
     \begin{center}
-      {#1}
+      {#2}
     \end{center}
   \end{frame}
 }
 
+\newcommand{\songbreak}[2][]{
+  \begin{frame}
+    \frametitle{Break#1}
+    \begin{center}
+      {#2}
+    \end{center}
+  \end{frame}
+}
 
+\newcommand{\interlude}[2][]{
+  \begin{frame}
+    \frametitle{Interlude#1}
+    \begin{center}
+      {#2}
+    \end{center}
+  \end{frame}
+}
+
+\newcommand{\tagline}[2][]{
+\begin{frame}[allowframebreaks] % extra long bridges
+    \frametitle{Tag#1}
+    \begin{center}
+      {#2}
+    \end{center}
+  \end{frame}
+}
+
+\newcommand{\outro}[2][]{
+\begin{frame}[allowframebreaks] % extra long bridges
+    \frametitle{Outro#1}
+    \begin{center}
+      {#2}
+    \end{center}
+  \end{frame}
+}
 
 % allow text to be presented on slides only
 \newcommand{\slidesonly}[1]{#1}
@@ -95,8 +129,13 @@
 \newcommand{\comment}[1]{}
 \newcommand{\columnbreak}{}
 \newcommand{\intro}[1]{}
-\newcommand{\outro}[1]{}
 \newcommand{\echo}{}
+
+\newcommand{\order}[1]{}
+\newcommand{\capo}[1]{}
+\newcommand{\songformat}[1]{}
+\newcommand{\scripture}[1]{}
+
 
 \begin{document}
 

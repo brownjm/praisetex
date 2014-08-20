@@ -1,7 +1,7 @@
 %    praiseTex - simple set of programs for creating praise music material, 
 %    such as guitar chord sheets and presentation slides
 %
-%    Copyright (C) 2012 Jeffrey M Brown
+%    Copyright (C) 2013 Jeffrey M Brown
 %    brown.jeffreym@gmail.com
 %
 %    This program is free software: you can redistribute it and/or modify
@@ -35,81 +35,130 @@
 \parindent = 0mm
 \widowpenalty = 10000
 \clubpenalty = 10000
-\renewcommand{\thesection}{\Alph{section}}
-\setcounter{section}{19}
 
-% set song title
-\newcommand{\songtitle}[1]{\subsection{#1}}
+% font style
+\newcommand{\headerfont}[1]{\emph{\small #1}}
+\newcommand{\stanzafont}[1]{\textbf{#1}}
 
-% assign the author
-\newcommand{\by}[1] {
-  \vspace{-2mm}
-  \hspace{11mm}\emph{#1}\\
-  \vspace{-3mm}
+% formatting for header commands
+\newcommand{\songtitle}[1]{\columnbreak\textbf{\huge #1}\\}
+\newcommand{\by}[1]{#1\\}
+\newcommand{\comment}[1]{\headerfont{#1}\\}
+\newcommand{\scripture}[1]{\headerfont{#1}\\}
+\newcommand{\capo}[1]{\headerfont{Capo: #1}\\}
+\newcommand{\order}[1]{\headerfont{Order: #1}\\}
+
+% formatting for stanza commands
+\renewcommand{\verse}[2][]{
+  \begin{minipage}{\columnwidth}
+  \stanzafont{verse#1:}\\
+  #2\\
+  \end{minipage}
 }
 
-% comments for musicians
-\newcommand{\comment}[1] {
-  \hspace{7mm}\textbf{#1}\\
-  \vspace{2mm}
-}
-
-% create a verse
-\renewcommand{\verse}[1]{#1\\}
-
-% create a prechorus
-\newcommand{\prechorus}[1] {
-  \vspace{-4mm}
+\newcommand{\prechorus}[2][] {
+  \begin{minipage}{\columnwidth}
+  %\vspace{-4mm}
   \begin{quote}
-    \emph{prechorus:}\\
-    \hspace{1mm}#1
+    \stanzafont{prechorus#1:}\\
+    \hspace{1mm}#2
   \end{quote}
-  \vspace{-2mm}
+  %\vspace{-2mm}
+  \end{minipage}
 }
 
-% create a chorus
-\newcommand{\chorus}[1] {
-  \vspace{-4mm}
+\newcommand{\chorus}[2][] {
+\begin{minipage}{\columnwidth}
+  %\vspace{-4mm}
   \begin{quote}
-    \emph{chorus:}\\
-    \hspace{1mm}#1\\
+    \stanzafont{chorus#1:}\\
+    \hspace{1mm}#2\\
   \end{quote}
-  \vspace{-2mm}
+  %\vspace{-2mm}
+\end{minipage}
 }
 
-% create a bridge
-\newcommand{\bridge}[1] {
-  \vspace{-3mm}
+\newcommand{\bridge}[2][] {
+  \begin{minipage}{\columnwidth}
+  %\vspace{-3mm}
   \begin{quote}
-    \emph{bridge:}\\
-    \hspace{1mm}#1\\
+    \stanzafont{bridge#1:}\\
+    \hspace{1mm}#2\\
   \end{quote}
-  \vspace{-3mm}
+  %\vspace{-3mm}
+  \end{minipage}
 }
 
 % intro or beginning of a song
 \newcommand{\intro}[1] {
-  \emph{intro:}\\
-  \verse{#1}
+  \stanzafont{intro:}\\
+  #1\\
 }
 
 % outro or ending of a song
 \newcommand{\outro}[1] {
-  \emph{outro:}\\
-  \verse{#1}
+  \stanzafont{outro:}\\
+  #1\\
 }
 
-% place a chord above following letter
-\newcommand{\chord}[1] {$\vspace{0.1mm}\stackrel{\makebox[0mm][l]{\hspace{1mm}\footnotesize{\textbf{#1\phantom{/}}}}}{^{^{^{}}}}$}
+\newcommand{\tagline}[2][] {
+  %\vspace{-4mm}
+  \begin{quote}
+    \stanzafont{tag#1:}\\
+    \hspace{1mm}#2
+  \end{quote}
+  %\vspace{-2mm}
+}
+
+\newcommand{\songbreak}[2][] {
+  %\vspace{-4mm}
+  \begin{quote}
+    \stanzafont{break#1:}\\
+    \hspace{1mm}#2
+  \end{quote}
+  %\vspace{-2mm}
+}
+
+\newcommand{\interlude}[2][] {
+  \begin{minipage}{\columnwidth}
+  %\vspace{-4mm}
+  \begin{quote}
+    \stanzafont{interlude#1:}\\
+    \hspace{1mm}#2
+  \end{quote}
+  %\vspace{-2mm}
+  \end{minipage}
+}
+
+
+% formatting for chords
+% must change chord command to better handle placement
+% ex: 
+%      Em7
+%   Some lyrics
+% This should be typeset the same as the plain text
+
+% possible alternatives:
+% \makeatletter
+% \newcommand{\stackover}{\genfrac{.}{.}\z@{}}
+% \makeatother
+% \[\stackover{a}{b}\]
+
+% another:
+% \stackrel{\mathrm{a}}{\mathrm{b}}
+
+% original = bad placement of long chords
+%{$\vspace{0.1mm}\stackrel{\makebox[0mm][l]{\hspace{1mm}\footnotesize{\textbf{#1\phantom{/}}}}}{^{^{^{}}}}$}
+
+% vspace to make the chords closer to the bottom line than the line above
+% hspace to remove gap between letters that this command causes, the kerning looks better most of the time with hspace{-0.3mm}
+\newcommand{\chord}[1] {$\vspace{+0.2mm}\stackrel{\makebox[0mm][l]{\hspace{1mm}\footnotesize{\textbf{#1\phantom{/}}}}}{^{^{^{}}}}\hspace{-0.3mm}$}
 
 % place a chord above and to the left of following letter
-\newcommand{\chordleft}[1] {$\vspace{0.1mm}\stackrel{\makebox[0mm][r]{\hspace{1mm}\footnotesize{\textbf{#1\phantom{/}}}}}{^{^{^{}}}}$}
+\newcommand{\chordleft}[1] {$\stackrel{\makebox[0mm][r]{\hspace{1mm}\footnotesize{\textbf{#1\phantom{/}}}}}{^{^{^{}}}}$}
 
-% create a line consisting of only chords
-\newcommand{\chordline}[1] {
-  \small{\textbf{#1}\\}
-}
-
+\newcommand{\chordline}[1]{\small{\textbf{#1}}\\}
+\newcommand{\songformat}[1]{#1}
 
 % directions to other parts of the song
 \newcommand{\tochorus}{\emph{(chorus)}}
@@ -121,15 +170,14 @@
 % disable unused commands
 \newcommand{\framebreak}{}
 \newcommand{\slidesonly}[1]{}
-%\renewcommand{\chord}[1]{}
-%\renewcommand{\chordleft}[1]{}
-%\renewcommand{\chordline}[1]{}
 
+% below is the document template for a chordsheet
 \title{GCF Praise Book}
 \author{Jeffrey M. Brown}
 \date{\today}
 
 \begin{document}
+\pagenumbering{gobble}
 \begin{multicols}{2}
   % input songs here
   \input{songs/YourLoveIsExtravagant.tex}

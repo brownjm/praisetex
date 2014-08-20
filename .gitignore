@@ -1,5 +1,4 @@
 
-TODO/*
 *~
 *.pdf
 *.out
@@ -8,5 +7,9 @@ TODO/*
 *.tex
 *.pyc
 
-!.gitignore
+tmp
+src
+newparser.py
+nanopass.py
 
+!.gitignore

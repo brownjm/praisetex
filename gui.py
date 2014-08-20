@@ -2,7 +2,7 @@
 #    praiseTex - simple set of programs for creating praise music material, 
 #    such as guitar chord sheets and presentation slides
 #
-#    Copyright (C) 2012 Jeffrey M Brown
+#    Copyright (C) 2013 Jeffrey M Brown
 #    brown.jeffreym@gmail.com
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -37,6 +37,7 @@ elif sys.version_info[0] == 3:
             Scrollbar, VERTICAL, EXTENDED, LEFT, RIGHT, TOP, BOTTOM, \
             Y, W, END
         from tkinter import filedialog
+        from tkinter.ttk import Scrollbar
     except ImportError:
         raise ImportError("Tkinter for Python is not installed")
 
@@ -46,6 +47,43 @@ else:
 from core import PraiseTex
 
 
+## scaling application
+# class App:
+#     def __init__(self):
+#         root=tk.Tk()
+#         # create a custom font
+#         self.customFont = tkFont.Font(family="Helvetica", size=12)
+
+#         # create a couple widgets that use that font
+#         buttonframe = tk.Frame()
+#         label = tk.Label(root, text="Hello, world", font=self.customFont)
+#         text = tk.Text(root, width=20, height=2, font=self.customFont)
+#         buttonframe.pack(side="top", fill="x")
+#         label.pack()
+#         text.pack()
+#         text.insert("end","press +/- buttons to change\nfont size")
+
+#         # create buttons to adjust the font
+#         bigger = tk.Button(root, text="+", command=self.OnBigger)
+#         smaller = tk.Button(root, text="-", command=self.OnSmaller)
+#         bigger.pack(in_=buttonframe, side="left")
+#         smaller.pack(in_=buttonframe, side="left")
+
+#         root.mainloop()
+
+#     def OnBigger(self):
+#         '''Make the font 2 points bigger'''
+#         size = self.customFont['size']
+#         self.customFont.configure(size=size+2)
+
+#     def OnSmaller(self):
+#         '''Make the font 2 points smaller'''
+#         size = self.customFont['size']
+#         self.customFont.configure(size=size-2)
+
+# app=App()
+
+
 class PraiseTexGUI(object):
     """Graphical interface for selecting songs and compiling them"""
     def __init__(self, songdir="songs"):
@@ -53,10 +91,18 @@ class PraiseTexGUI(object):
         self.songs = []
         self.praisetex = PraiseTex(songdir)
         self.root = Tk()
+        
+        # screen_width = self.root.winfo_screenwidth()
+        # screen_height = self.root.winfo_screenheight()
+        # print(screen_width, screen_height)
+        # avg_screen_width = 1280
+        # scale_dpi = screen_width / avg_screen_width
+        # print('DPI: ', self.root.winfo_fpixels('1i'))
+        # self.root.tk.call('tk', 'scaling', '-displayof', '.', scale_dpi)
 
         # dimensions for layout
-        #window_width = 600
-        #window_height = 480
+        # window_width = 600
+        # window_height = 480
         button_width = 6
         button_padx = "2m"
         button_pady = "1m"
@@ -66,27 +112,32 @@ class PraiseTexGUI(object):
         label_pady = "2m"
         listbox_width = 30
         listbox_height = 20
-        label_font = ("Arial", 14)
+        frame_title_font = ("TkDefaultFont", 14)
+        text_font = ("TkDefaultFont", 12)
+        menu_font = ("TkDefaultFont", 12)
+        button_font = ("TkDefaultFont", 12)
 
         # window properties
         self.root.title("praiseTex")
+        self.root.option_add("*Font", ("TkDefaultFont", 12))
         # set initial size of window
         #self.root.geometry("{0}x{1}".format(window_width, window_height))
 
         # menu
         menubar = Menu(self.root)
+        menubar.tk.call('tk', 'scaling', 2.5)
         filemenu = Menu(menubar, tearoff=0)
         filemenu.add_command(label="Open Directory", command=self.openDirectory)
         filemenu.add_command(label="Exit", command=self.root.quit)
         menubar.add_cascade(label="File", menu=filemenu)
-        toolmenu = Menu(menubar, tearoff=0)
-        toolmenu.add_command(label="Convert Chord Sheet", command=self.convert)
-        menubar.add_cascade(label="Tools", menu=toolmenu)
+        # toolmenu = Menu(menubar, tearoff=0)
+        # toolmenu.add_command(label="Convert Chord Sheet", command=self.convert)
+        # menubar.add_cascade(label="Tools", menu=toolmenu)
         self.root.config(menu=menubar)
 
         # left section
         self.songsToCompileTitle = Label(self.root, text="Songs to Compile", 
-                                         font=label_font,
+                                         font=frame_title_font,
                                          padx=label_padx, pady=label_pady)
         self.songsToCompileTitle.grid(row=0, column=0)
         self.songsToCompileFrame = Frame(self.root)
@@ -99,7 +150,8 @@ class PraiseTexGUI(object):
                                       height=listbox_height, 
                                       selectmode=EXTENDED,
                                       yscrollcommand=self.songsToCompileScroll.set,
-                                      exportselection=0)
+                                      exportselection=0,
+                                      font=text_font)
         self.songsToCompileScroll.config(command=self.songsToCompile.yview)
         self.songsToCompileScroll.pack(side=RIGHT, fill=Y)
         self.songsToCompile.pack()
@@ -130,7 +182,7 @@ class PraiseTexGUI(object):
         # right section
         self.availableSongsTitle = Label(self.root, 
                                          text="Available Songs",
-                                         font=label_font,
+                                         font=frame_title_font,
                                          padx=label_padx, 
                                          pady=label_pady)
         self.availableSongsTitle.grid(row=0, column=2)
@@ -281,11 +333,11 @@ class PraiseTexGUI(object):
         """Update the status bar"""
         self.status.config(text=message)
 
-    def convert(self):
-        filename = filedialog.askopenfilename()
-        if len(filename) > 0:
-            self.praisetex.convert(filename)
-            self.updateStatus("Wrote file: {}".format(filename + ".tex"))
+    # def convert(self):
+    #     filename = filedialog.askopenfilename()
+    #     if len(filename) > 0:
+    #         self.praisetex.convert(filename)
+    #         self.updateStatus("Wrote file: {}".format(filename + ".tex"))
 
 
 if __name__ == '__main__':
