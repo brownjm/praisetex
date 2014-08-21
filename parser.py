@@ -143,6 +143,9 @@ class Command(object):
         else:
             self.command_arg = textlist[1]
 
+    def __repr__(self):
+        return "Command({})".format(self.text)
+
 
 def identify_commands(index, element, parent):
     if isinstance(element, str) and index == 0:
@@ -194,7 +197,7 @@ def handle_chords_order(index, element, parent):
 
 
 def handle_slides_order(song):
-    stanzas = ["verse", "chorus", "prechorus", "bridge", "intro", "outro", "tag", "break", "order"]
+    stanzas = ["verse", "chorus", "prechorus", "bridge", "intro", "outro", "tag", "break", "interlude", "order"]
     stanzadict = {}
     newsong = []
 
@@ -206,20 +209,43 @@ def handle_slides_order(song):
                 newsong.append(parent)
 
     apply_pass(song, collect)
-    #print stanzadict
+
     if "order" in stanzadict:
         order = stanzadict["order"]
     else:
         return song
 
     order = [item.text for item in order[1:]]
+    order = expand_order(order)
 
     for stanza in order:
         newsong.append(stanzadict[stanza])
 
     return newsong
 
+def expand_order(order):
+    """Replace any 2x or x3 text within the order list with multiple stanzas"""
+    expanded = []
+    for item in order:
+        if 'x' not in item:
+            expanded.append(item)
+        else:
+            i = item.index('x')
+            if i >= len(item)-1:
+                raise ValueError("Malformed order entry: {}".format(item))
+            if item[i-1].isdigit():
+                n = int(item[i-1])
+                stanza = item[:i-1].strip()
+            elif item[i+1].isdigit():
+                n = int(item[i+1])
+                stanza = item[:i].strip()
+            else:
+                raise ValueError("Malformed order entry: {}".format(item))
 
+            expanded.extend([stanza]*n)
+    return expanded
+
+        
 # latex generation
 def latex_command(command, arg):
     """Returns a latex command with a single argument"""
@@ -439,30 +465,29 @@ def compile_slides(filename):
     apply_pass(song, identify_chordlines)
     apply_pass(song, remove_chords)
     apply_pass(song, remove_chords)
+    apply_pass(song, remove_chords)
+    apply_pass(song, remove_chords)
+    apply_pass(song, remove_chords)
     apply_pass(song, remove_capo)
 
     apply_pass(song, identify_text)
 
-    #apply_pass(song, remove_parenthesis)
     remove_empty_list(song)
-    #apply_pass(song, print_item)
-
-    # # handle order
+    
+    # handle order
     song = handle_slides_order(song)
-    #apply_pass(song, print_item)
 
-
-    # # latex generation
-    #apply_pass(song, chord_to_latex)
-    #apply_pass(song, chordline_to_latex)
-    # apply_pass(song, parenthesis_to_latex)
-    #apply_pass(song, spacing_to_latex)
+    # latex generation
     apply_pass(song, ampersand_to_latex)
     apply_pass(song, slides_command_to_latex)
 
-    # # final clean up of empty lists
+    # final clean up of empty lists
     remove_empty_list(song)
     apply_pass(song, remove_empty_latex_commands)
+    remove_empty_list(song)
+    remove_empty_list(song)
+    remove_empty_list(song)
+    remove_empty_list(song)
     remove_empty_list(song)
 
     # # combine all elements into a single string
@@ -471,6 +496,6 @@ def compile_slides(filename):
     return song
 
 if __name__ == '__main__':
-    songname = 'songs/ICannotTell.txt'
-    song = compile_chords(songname)
-    #song = compile_slides(songname)
+    songname = 'songs/WhomShallIFear.txt'
+    #song = compile_chords(songname)
+    song = compile_slides(songname)
