@@ -12,16 +12,22 @@ class Chord(object):
     """Represents a single chord within a song file"""
     def __init__(self, chord):
         self.text = chord
+    def __repr__(self):
+        return "Chord({})".format(self.text)
 
 class Chordline(object):
     """Represents multiple chords that are on a separate line"""
     def __init__(self, chords):
         self.text = chords
+    def __repr__(self):
+        return "Chordline({})".format(self.text)
 
 class Text(object):
     """Represents plain text, such as lyrics, within a song file"""
     def __init__(self, text):
         self.text = text
+    def __repr__(self):
+        return "Text({})".format(self.text)
 
 
 class KeyValuePair(object):
