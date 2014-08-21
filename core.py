@@ -173,7 +173,9 @@ class PraiseTex(object):
         stmp.extend(top)
         for song in self.compile:
             fullpathfilename = os.path.join(self.songdir, song)
-            stmp.append(parser.compile_slides(fullpathfilename))
+            songtext = parser.compile_slides(fullpathfilename)
+            stmp.append(songtext)
+
         stmp.extend(bottom)
         with open("stmp.tex", "w") as f:
             f.writelines(stmp)
