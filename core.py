@@ -26,7 +26,7 @@ import os
 import subprocess
 import song
 import latex
-import parser
+import parse
 
 # regex pattern for any latex command with the form: \command{arg}
 latexCommandPattern = r'\\(\w+)\{([^{]*)\}'
@@ -130,7 +130,7 @@ class PraiseTex(object):
         # count = 0
         for song in self.compile:
             fullpathfilename = os.path.join(self.songdir, song)
-            songtext = parser.compile_chords(fullpathfilename)
+            songtext = parse.compile_chords(fullpathfilename)
             ctmp.append(songtext)
             # with open('tmp/{}.tex'.format(song.replace('.txt', '')), 'w') as f:
             #     f.writelines(top)
@@ -173,7 +173,7 @@ class PraiseTex(object):
         stmp.extend(top)
         for song in self.compile:
             fullpathfilename = os.path.join(self.songdir, song)
-            songtext = parser.compile_slides(fullpathfilename)
+            songtext = parse.compile_slides(fullpathfilename)
             stmp.append(songtext)
 
         stmp.extend(bottom)
