@@ -21,7 +21,8 @@
 praiseTex was designed to run on GNU/Linux, Mac and Windows provided
 you have the required packages:
 
-    LaTeX, including pdflatex and Beamer
+    LaTeX, including pdflatex and Beamer (MikTex is recommended for Windows users)
+    
     Python 2.7+ or 3.2+, including Tkinter (most versions have this)
 
 
