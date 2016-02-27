@@ -1,31 +1,9 @@
-#!/usr/bin/python
-#    praiseTex - simple set of programs for creating praise music material,
-#    such as guitar chord sheets and presentation slides
-#
-#    Copyright (C) 2013 Jeffrey M Brown
-#    brown.jeffreym@gmail.com
-#
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
-#
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
-#
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 """core.py - Provides core classes and function for praiseTex program"""
 
 from collections import deque
 import re
 import os
 import subprocess
-import song
-import latex
 import parse
 
 # regex pattern for any latex command with the form: \command{arg}
