@@ -130,8 +130,13 @@ class PraiseTex(object):
         # count = 0
         for song in self.compile:
             fullpathfilename = os.path.join(self.songdir, song)
-            songtext = parse.compile_chords(fullpathfilename)
-            ctmp.append(songtext)
+            try:
+                songtext = parse.compile_chords(fullpathfilename)
+                ctmp.append(songtext)
+            except Exception as err:
+                print("Error in file: {}".format(fullpathfilename))
+                print(err)
+                exit()
             # with open('tmp/{}.tex'.format(song.replace('.txt', '')), 'w') as f:
             #     f.writelines(top)
             #     f.writelines(songtext)
@@ -173,8 +178,13 @@ class PraiseTex(object):
         stmp.extend(top)
         for song in self.compile:
             fullpathfilename = os.path.join(self.songdir, song)
-            songtext = parse.compile_slides(fullpathfilename)
-            stmp.append(songtext)
+            try:
+                songtext = parse.compile_slides(fullpathfilename)
+                stmp.append(songtext)
+            except Exception as err:
+                print("Error in file: {}".format(fullpathfilename))
+                print(err)
+                exit()
 
         stmp.extend(bottom)
         with open("stmp.tex", "w") as f:
