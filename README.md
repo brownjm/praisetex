@@ -45,7 +45,7 @@ License
 praisetex - a simple set of programs for creating praise music material, 
 such as guitar chordsheets and presentation slides
 
-Copyright &copy 2016 Jeffrey M Brown
+Copyright &copy; 2016 Jeffrey M Brown
 brown.jeffreym@gmail.com
 
 This program is free software: you can redistribute it and/or modify
