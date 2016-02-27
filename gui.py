@@ -118,7 +118,7 @@ class PraiseTexGUI(object):
         button_font = ("TkDefaultFont", 12)
 
         # window properties
-        self.root.title("praiseTex")
+        self.root.title("praisetex")
         self.root.option_add("*Font", ("TkDefaultFont", 12))
         # set initial size of window
         #self.root.geometry("{0}x{1}".format(window_width, window_height))
@@ -136,58 +136,14 @@ class PraiseTexGUI(object):
         self.root.config(menu=menubar)
 
         # left section
-        self.songsToCompileTitle = Label(self.root, text="Songs to Compile", 
-                                         font=frame_title_font,
-                                         padx=label_padx, pady=label_pady)
-        self.songsToCompileTitle.grid(row=0, column=0)
-        self.songsToCompileFrame = Frame(self.root)
-        self.songsToCompileFrame.grid(row=1, column=0, 
-                                      padx=frame_padx, pady=frame_pady)
-        self.songsToCompileScroll = Scrollbar(self.songsToCompileFrame,
-                                              orient=VERTICAL)
-        self.songsToCompile = Listbox(self.songsToCompileFrame, 
-                                      width=listbox_width, 
-                                      height=listbox_height, 
-                                      selectmode=EXTENDED,
-                                      yscrollcommand=self.songsToCompileScroll.set,
-                                      exportselection=0,
-                                      font=text_font)
-        self.songsToCompileScroll.config(command=self.songsToCompile.yview)
-        self.songsToCompileScroll.pack(side=RIGHT, fill=Y)
-        self.songsToCompile.pack()
-
-        self.compileButtonFrame = Frame(self.root)
-        self.compileButtonFrame.grid(row=2, column=0)
-        self.chordsButton = Button(self.compileButtonFrame, 
-                                   text="Chords", 
-                                   command=self.compileChords)
-        self.chordsButton.pack(side=LEFT, padx=button_padx, pady=button_pady)
-        self.slidesButton = Button(self.compileButtonFrame, 
-                                   text="Slides", 
-                                   command=self.compileSlides)
-        self.slidesButton.pack(side=RIGHT, padx=button_padx, pady=button_pady)
-
-        # middle section
-        self.addRemoveButtonFrame = Frame(self.root)
-        self.addRemoveButtonFrame.grid(row=1, column=1)
-        self.addSongButton = Button(self.addRemoveButtonFrame,
-                                    text="<<", 
-                                    command=self.addSong)
-        self.addSongButton.pack(side=TOP, padx=button_padx, pady=button_pady)
-        self.removeSongButton = Button(self.addRemoveButtonFrame, 
-                                       text=">>", 
-                                       command=self.removeSong)
-        self.removeSongButton.pack(side=BOTTOM)
-
-        # right section
         self.availableSongsTitle = Label(self.root, 
                                          text="Available Songs",
                                          font=frame_title_font,
                                          padx=label_padx, 
                                          pady=label_pady)
-        self.availableSongsTitle.grid(row=0, column=2)
+        self.availableSongsTitle.grid(row=0, column=0)
         self.availableSongsFrame = Frame(self.root)
-        self.availableSongsFrame.grid(row=1, column=2,
+        self.availableSongsFrame.grid(row=1, column=0,
                                       padx=frame_padx, pady=frame_pady)
         self.availableSongsScroll = Scrollbar(self.availableSongsFrame, 
                                               orient=VERTICAL)
@@ -204,7 +160,52 @@ class PraiseTexGUI(object):
         self.button = Button(self.root, 
                              text="Refresh",  
                              command=self.refreshSongList)
-        self.button.grid(row=2, column=2)
+        self.button.grid(row=2, column=0)
+
+        
+        # middle section
+        self.addRemoveButtonFrame = Frame(self.root)
+        self.addRemoveButtonFrame.grid(row=1, column=1)
+        self.addSongButton = Button(self.addRemoveButtonFrame,
+                                    text="Add", 
+                                    command=self.addSong)
+        self.addSongButton.pack(side=TOP, padx=button_padx, pady=button_pady)
+        self.removeSongButton = Button(self.addRemoveButtonFrame, 
+                                       text="Remove", 
+                                       command=self.removeSong)
+        self.removeSongButton.pack(side=BOTTOM)
+
+        # right section
+        self.songsToCompileTitle = Label(self.root, text="Songs to Compile", 
+                                         font=frame_title_font,
+                                         padx=label_padx, pady=label_pady)
+        self.songsToCompileTitle.grid(row=0, column=2)
+        self.songsToCompileFrame = Frame(self.root)
+        self.songsToCompileFrame.grid(row=1, column=2, 
+                                      padx=frame_padx, pady=frame_pady)
+        self.songsToCompileScroll = Scrollbar(self.songsToCompileFrame,
+                                              orient=VERTICAL)
+        self.songsToCompile = Listbox(self.songsToCompileFrame, 
+                                      width=listbox_width, 
+                                      height=listbox_height, 
+                                      selectmode=EXTENDED,
+                                      yscrollcommand=self.songsToCompileScroll.set,
+                                      exportselection=0,
+                                      font=text_font)
+        self.songsToCompileScroll.config(command=self.songsToCompile.yview)
+        self.songsToCompileScroll.pack(side=RIGHT, fill=Y)
+        self.songsToCompile.pack()
+
+        self.compileButtonFrame = Frame(self.root)
+        self.compileButtonFrame.grid(row=2, column=2)
+        self.chordsButton = Button(self.compileButtonFrame, 
+                                   text="Chords", 
+                                   command=self.compileChords)
+        self.chordsButton.pack(side=LEFT, padx=button_padx, pady=button_pady)
+        self.slidesButton = Button(self.compileButtonFrame, 
+                                   text="Slides", 
+                                   command=self.compileSlides)
+        self.slidesButton.pack(side=RIGHT, padx=button_padx, pady=button_pady)
 
         # status bar
         self.status = Label(self.root, text="Ready", padx="1m")
