@@ -31,10 +31,11 @@ def split_line(lyrics, chordline=''):
     if not has_chords(lyrics): # nothing left to do
         return lyrics, chordline
 
-    begin, end, command, chord = find_next_chord(line)
+    begin, end, command, chord = find_next_chord(lyrics)
     lyrics = remove_chord(lyrics, begin, end)
     chordline = add_chord(chordline, begin)
 
+    return chordline, lyrics
 
 def find_next_chord(line):
     """Finds the first chord in the line"""
@@ -58,3 +59,4 @@ if __name__ == '__main__':
     filename = sys.argv[1]
     with open(filename, 'r') as f:
         lines = f.readlines()
+        newlines = convert(lines)
