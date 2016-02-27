@@ -24,7 +24,14 @@
 
 % split up long verses into two slides and allow \framebreak command 
 % within \verse{}, see Beamer documentation for proper usage
+\setbeamertemplate{navigation symbols}{}
 \setbeamertemplate{frametitle continuation}[from second]
+\addtobeamertemplate{navigation symbols}{}{
+  \usebeamerfont{footline}
+  \usebeamercolor[fg]{footline}
+  \hspace{1em}
+  \insertframenumber
+}
 
 % removes date from title slide
 \date{}
