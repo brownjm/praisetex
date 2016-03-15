@@ -129,7 +129,8 @@ class PraiseTex(object):
         error = subprocess.call(["pdflatex", "-halt-on-error", "\\pdfminorversion=4", "\\input{ctmp.tex}"])
 
         if not error:
-            os.remove("chords.pdf")
+            if os.path.isfile("chords.pdf"):
+                os.remove("chords.pdf")
             os.rename("ctmp.pdf", "chords.pdf")
 
         # remove temporary files
@@ -173,7 +174,8 @@ class PraiseTex(object):
         error = subprocess.call(["pdflatex", "-halt-on-error",  "\\pdfminorversion=4", "\\input{stmp.tex}"])
         
         if not error:
-            os.remove("slides.pdf")
+            if os.path.isfile("slides.pdf"):
+                os.remove("slides.pdf")
             os.rename("stmp.pdf", "slides.pdf")
 
         # remove temporary files
