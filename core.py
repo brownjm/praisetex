@@ -160,7 +160,8 @@ class PraiseTex(object):
             fullpathfilename = os.path.join(self.songdir, song)
             try:
                 songtext = parse.compile_slides(fullpathfilename)
-                stmp.append(songtext)
+                stmp.append(songtext + r"\pagebreak")
+                print(songtext)
             except Exception as err:
                 print("Error in file: {}".format(fullpathfilename))
                 print(err)
